@@ -1,0 +1,67 @@
+# depslib dependency file v1.0
+1609455580 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\animatedbutton.cpp
+	"AnimatedButton.h"
+	<iostream>
+
+1599856548 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\animatedbutton.h
+	"InteractiveObject.h"
+
+1599856548 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\interactiveobject.h
+	<SFML/Graphics.hpp>
+	"ExtraFunctions.h"
+
+1581462914 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\extrafunctions.h
+	<SFML/Graphics.hpp>
+	<vector>
+	<math.h>
+
+1609452505 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\animatedbuttonanimations.cpp
+	"AnimatedButton.h"
+
+1598988613 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\extrafunctions.cpp
+	"ExtraFunctions.h"
+
+1609461853 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\interactiveobject.cpp
+	"InteractiveObject.h"
+
+1599082316 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\interactiveobjectanimations.cpp
+	"InteractiveObject.h"
+
+1609461145 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\menu.cpp
+	"Menu.h"
+
+1609460963 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\menu.h
+	"AnimatedButton.h"
+
+1609460219 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\menuanimations.cpp
+	"Menu.h"
+
+1609460120 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\sidebarmenu.cpp
+	"SidebarMenu.h"
+
+1609455650 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\sidebarmenu.h
+	"AnimatedButton.h"
+
+1609452505 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\sidebarmenuanimations.cpp
+	"SidebarMenu.h"
+
+1585690991 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\textedit.cpp
+	"TextEdit.h"
+
+1585678109 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\textedit.h
+	<SFML/Graphics.hpp>
+
+1585692122 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\textmemo.cpp
+	"TextMemo.h"
+
+1585690345 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\classes\textmemo.h
+	<SFML/Graphics.hpp>
+	<vector>
+
+1620054374 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\demo\main.cpp
+	<iostream>
+	<SFML/Graphics.hpp>
+	<SFML/System.hpp>
+	"Classes/SidebarMenu.h"
+	<cmath>
+
