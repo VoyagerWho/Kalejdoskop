@@ -2,8 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Classes/SidebarMenu.h"
-#include <cmath>
-#define M_PI 3.141592653589
 #include "Utility/Interpolate.h"
 
 /**
@@ -109,6 +107,14 @@ void makeDrawing(sf::RenderTexture& tex)
   tex.display();
 }
 
+void test(int a, int b)
+{
+  for(unsigned i=0;i<1000;i++)
+  {
+    std::cout<<a*b<<std::endl;
+  }
+}
+
 
 int main()
 {
@@ -123,7 +129,7 @@ int main()
     sf::Clock clock;
     float deltaTime=0.0;
     float angle=0.0f;
-    float speed=0.0f;
+    float speed=M_PI/25.0;
     SidebarMenu sidemenu(window, SidebarMenu::Right, 4);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
     sidemenu.buttons[0].setLabelString("Display");
@@ -144,7 +150,7 @@ int main()
     datastorage.angle=0.0;
     datastorage.NoAxis=8;
     datastorage.needUpdate=true;
-    datastorage.oryginal.loadFromFile("Files/test.png");
+    datastorage.oryginal.loadFromFile("Files/slimakiv2.png");
     datastorage.display.create(datastorage.dw, datastorage.dh);
     datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
     for(unsigned i=0;i<datastorage.dh;i++)
@@ -156,6 +162,15 @@ int main()
     }
     sf::Sprite display;
     display.setTexture(datastorage.display);
+
+    //-----------------------------------------------------------------------------------------------------------
+    //         Beware!      Debug zone
+    //-----------------------------------------------------------------------------------------------------------
+
+
+    //-----------------------------------------------------------------------------------------------------------
+
+
     while(window.isOpen())
     {
       deltaTime=clock.restart().asSeconds();

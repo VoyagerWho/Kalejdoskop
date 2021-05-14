@@ -3,8 +3,10 @@
 
 #include <iostream>
 #include <cmath>
+#define M_PI 3.141592653589
 #include <SFML/Graphics.hpp>
-
+#include <SFML/System.hpp>
+#include <functional>
 class Container// do dokoñczenia
 {
 public:
@@ -30,6 +32,8 @@ public://private:
 	sf::Texture display;
 	sf::Uint8* piksele;
 };
+
+void updateThread(Container& ds, unsigned ymin, unsigned ymax);
 
 sf::Vector2f translate(sf::Vector2f posDis, Container& ds);
 

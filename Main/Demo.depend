@@ -124,19 +124,20 @@
 	<SFML/Graphics.hpp>
 	<vector>
 
-1621013102 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\main.cpp
+1621016743 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\main.cpp
 	<iostream>
 	<SFML/Graphics.hpp>
 	<SFML/System.hpp>
 	"Classes/SidebarMenu.h"
-	<cmath>
 	"Utility/Interpolate.h"
 
-1621012943 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
+1621016743 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
 	<iostream>
 	<cmath>
 	<SFML/Graphics.hpp>
+	<SFML/System.hpp>
+	<functional>
 
-1621011654 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
+1621015291 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
 	"Interpolate.h"
 

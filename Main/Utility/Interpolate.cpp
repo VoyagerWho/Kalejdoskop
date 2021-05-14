@@ -2,13 +2,18 @@
 
 sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 {
+	//std::cout<<"Calculations:"<<std::endl;
 	sf::Vector2f middleDis(ds.dw/2.0, ds.dh/2.0);
-	//sf::Vector2f middleTex(ds.tw/2.0, ds.th/2.0);
-	double theta = 180.0/double(ds.NoAxis);
+	sf::Vector2f middleTex(ds.tw/2.0, ds.th/2.0);
+	double theta = M_PI/double(ds.NoAxis);
+	//std::cout<<"Theta: "<<theta<<std::endl;
 	sf::Vector2f ofcenter = posDis-middleDis;
-	double phi = atan2(ofcenter.y, ofcenter.x);
+	double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
+	//std::cout<<"Phi: "<<phi<<std::endl;
 	unsigned part = int(phi/theta);
+	//std::cout<<"part: "<<part<<std::endl;
 	double radiusD = sqrt(ofcenter.y*ofcenter.y+ ofcenter.x*ofcenter.x);
+	//std::cout<<"R: "<<radiusD<<std::endl;
 	double radiusT = radiusD;//*ds.tw/ds.dw;
 	double alpha;
 	if(part & 1)
@@ -19,7 +24,8 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 	{
 		alpha = (part+1)*theta - phi;
 	}
-	return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleDis+sf::Vector2f(1.0, 1.0);
+	//std::cout<<"Alpha: "<<alpha<<std::endl;
+	return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleTex;
 }
 
 sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
@@ -52,18 +58,53 @@ void Container::update()
 {
   if(needUpdate)
   {
-    sf::Color tmp;
-    for(unsigned i=0;i<dh;i++)
-    {
-      for(unsigned j=0;j<dw;j++)
-      {
-        tmp = interpolateBL(translate(sf::Vector2f(j, i), *this), *this);
-        piksele[4*(i*dw+j)]=tmp.r;
-        piksele[4*(i*dw+j)+1]=tmp.g;
-        piksele[4*(i*dw+j)+2]=tmp.b;
-      }
-    }
+    //single thread
+//    sf::Color tmp;
+//    for(unsigned i=0;i<dh;i++)
+//    {
+//      for(unsigned j=0;j<dw;j++)
+//      {
+//        tmp = interpolateBL(translate(sf::Vector2f(j, i), *this), *this);
+//        piksele[4*(i*dw+j)]=tmp.r;
+//        piksele[4*(i*dw+j)+1]=tmp.g;
+//        piksele[4*(i*dw+j)+2]=tmp.b;
+//      }
+//    }
+//    needUpdate=false;
+//    display.update(piksele);
+
+    // multi tread
+    sf::Thread th1(std::bind(updateThread, *this, 0, dh*1.0/4.0));
+    sf::Thread th2(std::bind(updateThread, *this, dh*1.0/4.0, dh*2.0/4.0));
+    sf::Thread th3(std::bind(updateThread, *this, dh*2.0/4.0, dh*3.0/4.0));
+    sf::Thread th4(std::bind(updateThread, *this, dh*3.0/4.0, dh*4.0/4.0));
+
+    th1.launch();
+    th2.launch();
+    th3.launch();
+    th4.launch();
+
+    th1.wait();
+    th2.wait();
+    th3.wait();
+    th4.wait();
     needUpdate=false;
     display.update(piksele);
+  }
+
+}
+
+void updateThread(Container& ds, unsigned ymin, unsigned ymax)
+{
+  sf::Color tmp;
+  for(unsigned i=ymin;i<ymax;i++)
+  {
+    for(unsigned j=0;j<ds.dw;j++)
+    {
+      tmp = interpolateBL(translate(sf::Vector2f(j, i), ds), ds);
+      ds.piksele[4*(i*ds.dw+j)]=tmp.r;
+      ds.piksele[4*(i*ds.dw+j)+1]=tmp.g;
+      ds.piksele[4*(i*ds.dw+j)+2]=tmp.b;
+    }
   }
 }
