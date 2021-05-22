@@ -143,25 +143,20 @@ int main()
     sf::VertexArray triangle(sf::Triangles, 3);
     Container datastorage;
     //do konstruktora
-    datastorage.dw = 800;
-    datastorage.dh = 800;
-    datastorage.tw = 1135;//dw*sqrt(2)
-    datastorage.th = 1135;//dh*sqrt(2)
-    datastorage.angle=0.0;
-    datastorage.NoAxis=8;
-    datastorage.needUpdate=true;
-    datastorage.oryginal.loadFromFile("Files/slimakiv2.png");
-    datastorage.display.create(datastorage.dw, datastorage.dh);
-    datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
-    for(unsigned i=0;i<datastorage.dh;i++)
+   
+    //datastorage.needUpdate=true;
+    datastorage.set_oryginal("Files/slimakiv2.png");
+    datastorage.create_Texture();
+    datastorage.piksele=new sf::Uint8[datastorage.get_dw()*datastorage.get_dh()*4];
+    for(unsigned i=0;i<datastorage.get_dh();i++)
     {
-      for(unsigned j=0;j<datastorage.dw;j++)
+      for(unsigned j=0;j<datastorage.get_dw();j++)
       {
-        datastorage.piksele[4*(i*datastorage.dw + j) + 3]=255;
+        datastorage.piksele[4*(i*datastorage.get_dw() + j) + 3]=255;
       }
     }
     sf::Sprite display;
-    display.setTexture(datastorage.display);
+    display.setTexture(datastorage.get_Texture());
 
     //-----------------------------------------------------------------------------------------------------------
     //         Beware!      Debug zone
@@ -175,8 +170,9 @@ int main()
     {
       deltaTime=clock.restart().asSeconds();
       // do moveAngle
-      datastorage.angle+=deltaTime*speed;
-      datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
+      datastorage.moveAngle(deltaTime, speed);
+      //datastorage.angle+=deltaTime*speed;
+      //datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
       //datastorage.needUpdate=true;
       while(window.pollEvent(evnt))
       {
