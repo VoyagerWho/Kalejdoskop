@@ -102,9 +102,12 @@ void updateThread(Container& ds, unsigned ymin, unsigned ymax)
     for(unsigned j=0;j<ds.get_dw();j++)
     {
       tmp = interpolateBL(translate(sf::Vector2f(j, i), ds), ds);
-      ds.piksele[4*(i*ds.get_dw()+j)]=tmp.r;
+      /*ds.piksele[4*(i*ds.get_dw()+j)]=tmp.r;
       ds.piksele[4*(i*ds.get_dw()+j)+1]=tmp.g;
-      ds.piksele[4*(i*ds.get_dw()+j)+2]=tmp.b;
+      ds.piksele[4*(i*ds.get_dw()+j)+2]=tmp.b;*/
+      ds.set_idx_piks(4 * (i * ds.get_dw() + j), tmp.r);
+      ds.set_idx_piks(4 * (i * ds.get_dw() + j) +1, tmp.g);
+      ds.set_idx_piks(4 * (i * ds.get_dw() + j) +2, tmp.b);
     }
   }
 }

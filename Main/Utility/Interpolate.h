@@ -25,15 +25,14 @@ public:
   }
     //ewentualnie: sf::Vector2u dim = oryginal.getSize();
 
-  ~Container(){}
-  //ctor
-  //dtor=
+  ~Container(){
+      //delete [] piksele;
+  }
 
   void moveAngle(float deltaTime, float speed){
     angle+=deltaTime*speed;
     angle = angle > 2*M_PI ? angle - 2*M_PI : angle;
   }
-  //void moveAngle(float deltatime);
 
   unsigned int get_dw(){
     return dw;
@@ -70,12 +69,10 @@ public:
  sf::Color getPixel(unsigned int x, unsigned int y){
     return oryginal.getPixel(x,y);
   }
-  //getPixel -> return oryginal.getPixel()
 
   sf::Texture& get_Texture(){
     return display;
   }
-  //get texture
 
   unsigned int get_NoAxis(){
     return NoAxis;
@@ -83,16 +80,25 @@ public:
 
   void add_Axis(){
     if(NoAxis<12) NoAxis++;
-    //needUpdate=true;
   }
 
   void sub_Axis(){
     if(NoAxis>1) NoAxis--;
-    //needUpdate=true;
   }
 
-  //+1 -1 dla osi
-  sf::Uint8* piksele;//
+  sf::Uint8* get_piksele() {
+      return piksele;
+  }
+
+  void set_piksele(sf::Uint8* newPiks) {
+      delete [] piksele;
+      piksele = newPiks;
+  }
+
+  void set_idx_piks(int idx, int value) {
+      piksele[idx] = value;
+  }
+
   bool needUpdate;
 
 private:
@@ -102,7 +108,7 @@ private:
   unsigned NoAxis;
   sf::Image oryginal;
   sf::Texture display;
-  //sf::Uint8* piksele;
+  sf::Uint8* piksele;
 };
 
 void updateThread(Container& ds, unsigned ymin, unsigned ymax);

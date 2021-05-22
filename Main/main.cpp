@@ -61,12 +61,12 @@ void makeDrawing(sf::RenderTexture& tex)
 {
   sf::CircleShape c(30.0f);
   sf::Texture im;
-  im.loadFromFile("Files/Testowy.jpg");
+  im.loadFromFile("Files/slimakiv2.png");
   sf::Sprite sp;
   sp.setTexture(im);
   sp.scale(0.2, 0.2);
 
-  tex.clear(sf::Color::Transparent);
+  /*tex.clear(sf::Color::Transparent);
 
   c.setFillColor(sf::Color::Red);
   c.setOutlineColor(sf::Color::Black);
@@ -100,9 +100,9 @@ void makeDrawing(sf::RenderTexture& tex)
   c.setOutlineThickness(1.0f);
   c.setPosition(55.0f, 55.0f);
   c.setPointCount(8);
-  tex.draw(c);
+  tex.draw(c);*/
 
-  //tex.draw(sp);
+  tex.draw(sp);
 
   tex.display();
 }
@@ -159,7 +159,8 @@ int main()
     {
       for(unsigned j=0;j<datastorage.get_dw();j++)
       {
-        datastorage.piksele[4*(i*datastorage.get_dw() + j) + 3]=255;
+        /*datastorage.piksele[4*(i*datastorage.get_dw() + j) + 3]=255;*/
+        datastorage.set_idx_piks(4 * (i * datastorage.get_dw() + j) + 3, 255);
       }
     }
     sf::Sprite display;
@@ -230,10 +231,28 @@ int main()
                 }break;
                 case 5:
                 {
-                    const std::string filename = "nazwabitmapy.png";
+                    speed = 0.0f;
+                    const std::string filename = "nazwabitmapy";
+                    const std::string rozsz = ".png";
+                    float tempSpeed = 2.0* M_PI / 100.0;
+                    
                     //generuj bitmapê, czyli 100 obrazków
-                    sf::Image bitmap = datastorage.get_Texture().copyToImage();
-                    bitmap.saveToFile(filename);
+                    sf::Image bitmap;
+                    
+                    for (int i = 1; i <= 4; i++) {
+                        datastorage.moveAngle(1, tempSpeed);
+                        datastorage.update();
+                        window.draw(display);
+                        bitmap = datastorage.get_Texture().copyToImage();
+
+                        if (i < 10) {
+                            bitmap.saveToFile(filename + "00" + std::to_string(i) + rozsz);
+                        } else if (i < 100) {
+                            bitmap.saveToFile(filename + "0"+std::to_string(i) + rozsz);
+                        } else {
+                            bitmap.saveToFile(filename + std::to_string(i) + rozsz);
+                        }
+                    }
                 }break;
                 case 6:
                 {
@@ -277,6 +296,6 @@ int main()
       window.display();
 
     }
-    delete[] datastorage.piksele;
+    //delete[] datastorage.piksele;
     return 0;
 }
