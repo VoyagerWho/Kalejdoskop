@@ -190,7 +190,7 @@ void TextMemo::moveCursor(const sf::Vector2f& mousePos)
   unsigned int length = text.getString().getSize();
   float charBegin = text.getPosition().x + 5.0f;
   if(mousePos.x < charBegin + text.getCharacterSize()*CHAR_WIDTH_MULTIPLIER*0.5f)
-    moveCursor(-cursorPos);
+    moveCursor((-1)*cursorPos);
   else if(mousePos.x > charBegin + float(length-0.5f)*text.getCharacterSize()*CHAR_WIDTH_MULTIPLIER)
   {
     cursorPos = length;

@@ -21,6 +21,7 @@ public:
     angle=0.0;
     NoAxis=8;
     needUpdate=true;
+    piksele  = new sf::Uint8[dw * dh * 4];
   }
     //ewentualnie: sf::Vector2u dim = oryginal.getSize();
 
@@ -66,14 +67,12 @@ public:
     display.create(dw, dh);
   }
 
-   //get wymiarów
-
  sf::Color getPixel(unsigned int x, unsigned int y){
     return oryginal.getPixel(x,y);
   }
   //getPixel -> return oryginal.getPixel()
 
-  sf::Texture get_Texture(){
+  sf::Texture& get_Texture(){
     return display;
   }
   //get texture

@@ -130,15 +130,21 @@ int main()
     float deltaTime=0.0;
     float angle=0.0f;
     float speed=M_PI/25.0;
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 4);
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 7);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
+    //---
     sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
     sidemenu.buttons[2].setLabelString("Stop");
-    sidemenu.buttons[3].setLabelString("Off");
-    sidemenu.buttons[3].flags ^= AButtonCircle::showLabel;
-    sidemenu.buttons[3].setTextureRect(sf::IntRect(0, 0, 256, 256));
-    sidemenu.buttons[3].loadTextureFromFile("Files/OnOff.png");
+
+    sidemenu.buttons[3].setLabelString("+1");
+    sidemenu.buttons[4].setLabelString("-1");
+    sidemenu.buttons[5].setLabelString("Generuj");
+
+    sidemenu.buttons[6].setLabelString("Off");
+    sidemenu.buttons[6].flags ^= AButtonCircle::showLabel;
+    sidemenu.buttons[6].setTextureRect(sf::IntRect(0, 0, 256, 256));
+    sidemenu.buttons[6].loadTextureFromFile("Files/OnOff.png");
 
     sf::VertexArray triangle(sf::Triangles, 3);
     Container datastorage;
@@ -147,7 +153,8 @@ int main()
     //datastorage.needUpdate=true;
     datastorage.set_oryginal("Files/slimakiv2.png");
     datastorage.create_Texture();
-    datastorage.piksele=new sf::Uint8[datastorage.get_dw()*datastorage.get_dh()*4];
+    //datastorage.piksele=new sf::Uint8[datastorage.get_dw()*datastorage.get_dh()*4];
+
     for(unsigned i=0;i<datastorage.get_dh();i++)
     {
       for(unsigned j=0;j<datastorage.get_dw();j++)
@@ -169,13 +176,15 @@ int main()
     while(window.isOpen())
     {
       deltaTime=clock.restart().asSeconds();
-      // do moveAngle
       datastorage.moveAngle(deltaTime, speed);
       //datastorage.angle+=deltaTime*speed;
       //datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
       //datastorage.needUpdate=true;
+      datastorage.needUpdate = true;
+
       while(window.pollEvent(evnt))
       {
+        
         switch (evnt.type)
         {
         case sf::Event::Closed:
@@ -213,6 +222,21 @@ int main()
                 }break;
                 case 3:
                 {
+                    datastorage.add_Axis();
+                }break;
+                case 4:
+                {
+                    datastorage.sub_Axis();
+                }break;
+                case 5:
+                {
+                    const std::string filename = "nazwabitmapy.png";
+                    //generuj bitmapê, czyli 100 obrazków
+                    sf::Image bitmap = datastorage.get_Texture().copyToImage();
+                    bitmap.saveToFile(filename);
+                }break;
+                case 6:
+                {
                   displayThread.terminate();
                   window.close();
                 }break;
@@ -229,6 +253,8 @@ int main()
 
       }
       window.clear(sf::Color(64,64,64));
+
+     
 
       datastorage.update();
       window.draw(display);
