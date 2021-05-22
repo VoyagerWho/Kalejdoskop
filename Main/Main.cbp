@@ -32,6 +32,27 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="Classes/AnimatedButton.cpp" />
+		<Unit filename="Classes/AnimatedButton.h" />
+		<Unit filename="Classes/AnimatedButtonAnimations.cpp" />
+		<Unit filename="Classes/ExtraFunctions.cpp" />
+		<Unit filename="Classes/ExtraFunctions.h" />
+		<Unit filename="Classes/InteractiveObject.cpp" />
+		<Unit filename="Classes/InteractiveObject.h" />
+		<Unit filename="Classes/InteractiveObjectAnimations.cpp" />
+		<Unit filename="Classes/Menu.cpp" />
+		<Unit filename="Classes/Menu.h" />
+		<Unit filename="Classes/MenuAnimations.cpp" />
+		<Unit filename="Classes/Scrollbar.cpp" />
+		<Unit filename="Classes/Scrollbar.h" />
+		<Unit filename="Classes/ScrollbarAnimations.cpp" />
+		<Unit filename="Classes/SidebarMenu.cpp" />
+		<Unit filename="Classes/SidebarMenu.h" />
+		<Unit filename="Classes/SidebarMenuAnimations.cpp" />
+		<Unit filename="Classes/TextEdit.cpp" />
+		<Unit filename="Classes/TextEdit.h" />
+		<Unit filename="Utility/Interpolate.cpp" />
+		<Unit filename="Utility/Interpolate.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

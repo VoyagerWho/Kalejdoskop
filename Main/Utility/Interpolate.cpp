@@ -14,7 +14,7 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 	//std::cout<<"part: "<<part<<std::endl;
 	double radiusD = sqrt(ofcenter.y*ofcenter.y+ ofcenter.x*ofcenter.x);
 	//std::cout<<"R: "<<radiusD<<std::endl;
-	double radiusT = radiusD;//*ds.tw/ds.dw;
+	double radiusT = radiusD*(double(ds.tw-2)/double(ds.dw))*0.7071;
 	double alpha;
 	if(part & 1)
 	{
@@ -32,12 +32,12 @@ sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
 {
   int x1 = int(pos.x);
   int y1 = int(pos.y);
-  x1 = x1<0 ? 0 : x1;
-  y1 = y1<0 ? 0 : y1;
-  x1 = x1>=ds.tw ? ds.tw-2 : x1;
-  y1 = y1>=ds.th ? ds.th-2 : y1;
-  int x2 = x1+1;
-  int y2 = y1+1;
+  x1 = x1<0 ? ds.tw+x1 : x1;
+  y1 = y1<0 ? ds.th+y1 : y1;
+  x1 = x1>=ds.tw ? x1 - ds.tw : x1;
+  y1 = y1>=ds.th ? y1 - ds.th : y1;
+  int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
+  int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
   double decX = pos.x - float(x1);
   double decY = pos.y - float(y1);
 

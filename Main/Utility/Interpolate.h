@@ -25,6 +25,7 @@ public:
 
 public://private:
 	unsigned dw, dh, tw, th;
+	double offsetX, offsetY;
 	double angle;
 
 	unsigned NoAxis;

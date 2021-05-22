@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Classes/SidebarMenu.h"
+#include "Classes/Scrollbar.h"
+#include "Classes/TextEdit.h"
 #include "Utility/Interpolate.h"
 
 /**
@@ -102,18 +104,9 @@ void makeDrawing(sf::RenderTexture& tex)
   tex.display();
 }
 
-void test(int a, int b)
-{
-  for(unsigned i=0;i<1000;i++)
-  {
-    std::cout<<a*b<<std::endl;
-  }
-}
-
-
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Demo", sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Kalejdoskop", sf::Style::Default);
     window.setFramerateLimit(60);
     sf::RenderTexture renderTex;
     renderTex.create(200, 200);
@@ -124,27 +117,42 @@ int main()
     sf::Clock clock;
     float deltaTime=0.0;
     float speed=0.0;
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 4);
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 8);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
     sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
     sidemenu.buttons[2].setLabelString("Stop");
-    sidemenu.buttons[3].setLabelString("Off");
-    sidemenu.buttons[3].flags ^= AButtonCircle::showLabel;
-    sidemenu.buttons[3].setTextureRect(sf::IntRect(0, 0, 256, 256));
-    sidemenu.buttons[3].loadTextureFromFile("Files/OnOff.png");
+    sidemenu.buttons[3].setLabelString("+1");
+    sidemenu.buttons[4].setLabelString("-1");
+    sidemenu.buttons[5].setLabelString("Zapisz");
+    sidemenu.buttons[6].setLabelString("Generuj");
+
+    sidemenu.buttons[7].setLabelString("Off");
+    sidemenu.buttons[7].flags ^= AButtonCircle::showLabel;
+    sidemenu.buttons[7].setTextureRect(sf::IntRect(0, 0, 256, 256));
+    sidemenu.buttons[7].loadTextureFromFile("Files/OnOff.png");
+
+    Scrollbar scrollAngle(0.0, 2*M_PI);
+    scrollAngle.setPosition(sf::Vector2f(590.0f, 770.0f));
+    scrollAngle.setSize(sf::Vector2f(200.0f, 20.0f));
+    scrollAngle.setLabelString("Kat");
+
+    TextEdit edit1(sf::Vector2f(600.0f, 10.0f), (unsigned)9);
+    edit1.visible = true;
+    TextEdit* activeEdit = nullptr;
+
 
     sf::VertexArray triangle(sf::Triangles, 3);
     Container datastorage;
     //do konstruktora
     datastorage.dw = 800;
     datastorage.dh = 800;
-    datastorage.tw = 1135;//dw*sqrt(2)
-    datastorage.th = 1135;//dh*sqrt(2)
+    datastorage.tw = 800;//dw*sqrt(2)
+    datastorage.th = 800;//dh*sqrt(2)
     datastorage.angle=0.0;
     datastorage.NoAxis=8;
     datastorage.needUpdate=true;
-    datastorage.oryginal.loadFromFile("Files/slimakiv2.png");
+    datastorage.oryginal.loadFromFile("Files/Kalejdoskop.png");
     datastorage.display.create(datastorage.dw, datastorage.dh);
     datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
     for(unsigned i=0;i<datastorage.dh;i++)
@@ -161,9 +169,7 @@ int main()
     //         Beware!      Debug zone
     //-----------------------------------------------------------------------------------------------------------
 
-
     //-----------------------------------------------------------------------------------------------------------
-
 
     while(window.isOpen())
     {
@@ -185,15 +191,56 @@ int main()
             window.setView(sf::View(sf::FloatRect(0.0f, 0.0f, window.getSize().x, window.getSize().y)));
             sidemenu.setPosition(window);
           }break;
+        case sf::Event::TextEntered:
+          {
+            if(activeEdit)
+              activeEdit->addCharacter(evnt.text.unicode);
+          }break;
+        case sf::Event::KeyPressed:
+          {
+            if(activeEdit)
+            {
+              if(evnt.key.code == sf::Keyboard::Left)
+                activeEdit->moveCursor(-1);
+              else if(evnt.key.code == sf::Keyboard::Right)
+                activeEdit->moveCursor(1);
+              else if(evnt.key.code == sf::Keyboard::Delete)
+                activeEdit->delCharacter();
+            }
+          }break;
         case sf::Event::MouseMoved:
           {
             cursor.loadFromSystem(sf::Cursor::Arrow);
             if(sidemenu.onHover(evnt))
               cursor.loadFromSystem(sf::Cursor::Hand);
+            if(scrollAngle.onHover(evnt))
+              cursor.loadFromSystem(sf::Cursor::Hand);
+//            if(edit1.isInActiveZone(sf::Vector2f(evnt.mouseMove.x,evnt.mouseMove.y)));
+//            {
+//              cursor.loadFromSystem(sf::Cursor::Text);
+//            }
             window.setMouseCursor(cursor);
           }break;
         case sf::Event::MouseButtonPressed:
           {
+            if(evnt.mouseButton.button == 0)
+            {
+              //Turn off active stuff
+              if((activeEdit)&&!(activeEdit->isInActiveZone(sf::Vector2f(evnt.mouseButton.x,evnt.mouseButton.y))))
+              {
+                activeEdit->active=false;
+                activeEdit=nullptr;
+              }
+              //Find new active think
+              if(edit1.isInActiveZone(sf::Vector2f(evnt.mouseButton.x,evnt.mouseButton.y)))
+              {
+                if(activeEdit)
+                  activeEdit->active=false;
+                activeEdit=&edit1;
+                activeEdit->active=true;
+                activeEdit->moveCursor(sf::Vector2f(evnt.mouseButton.x,evnt.mouseButton.y));
+              }
+            }
             if(sidemenu.onClick(evnt))
             {
               switch (sidemenu.getOption())
@@ -212,6 +259,50 @@ int main()
                 }break;
                 case 3:
                 {
+                  if(datastorage.NoAxis<20)
+                  {
+                    datastorage.NoAxis++;
+                    datastorage.needUpdate=true;
+                  }
+                }break;
+                case 4:
+                {
+                  if(datastorage.NoAxis>1)
+                  {
+                    datastorage.NoAxis--;
+                    datastorage.needUpdate=true;
+                  }
+                }break;
+                case 5:
+                {
+                  datastorage.display.copyToImage().saveToFile("Output/preview.png");
+                }break;
+                case 6:
+                {
+                  speed = 0.0f;
+                  const std::string filename = "Output/" + edit1.GetString();
+                  const std::string rozsz = ".png";
+                  float tempSpeed = 2.0* M_PI / 100.0;
+
+                  //generuj bitmapê, czyli 100 obrazków
+
+                  for (int i = 1; i <= 100; i++)
+                  {
+                    datastorage.angle+=tempSpeed;
+                    datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;
+                    datastorage.needUpdate=true;
+                    datastorage.update();
+                    if (i < 10) {
+                        datastorage.display.copyToImage().saveToFile(filename + "00" + std::to_string(i) + rozsz);
+                    } else if (i < 100) {
+                        datastorage.display.copyToImage().saveToFile(filename + "0"+std::to_string(i) + rozsz);
+                    } else {
+                        datastorage.display.copyToImage().saveToFile(filename + std::to_string(i) + rozsz);
+                    }
+                  }
+                }break;
+                case 7:
+                {
                   displayThread.terminate();
                   window.close();
                 }break;
@@ -220,6 +311,11 @@ int main()
                   break;
               }
             }
+            if(scrollAngle.onClick(evnt))
+            {
+              datastorage.angle=scrollAngle.getValue();
+              datastorage.needUpdate=true;
+            }
           }break;
 
           default:
@@ -227,6 +323,8 @@ int main()
         }
 
       }
+      if(activeEdit)
+        activeEdit->update(deltaTime);
       window.clear(sf::Color(64,64,64));
 
       datastorage.update();
@@ -234,6 +332,8 @@ int main()
 
       sidemenu.update(deltaTime);
       window.draw(sidemenu);
+      window.draw(edit1);
+      window.draw(scrollAngle);
 
 //      for(unsigned i=0;i<16;i++)
 //      {
