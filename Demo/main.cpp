@@ -39,10 +39,10 @@ void makeDrawing(sf::RenderTexture& tex)
 {
   sf::CircleShape c(30.0f);
   sf::Texture im;
-  im.loadFromFile("Files/Testowy.jpg");
+  im.loadFromFile("Files/Kalejdoskop.png");
   sf::Sprite sp;
   sp.setTexture(im);
-  sp.scale(0.2, 0.2);
+  //sp.scale(0.25, 0.25);
 
   tex.clear(sf::Color::Transparent);
 
@@ -80,7 +80,7 @@ void makeDrawing(sf::RenderTexture& tex)
   c.setPointCount(8);
   tex.draw(c);
 
-  //tex.draw(sp);
+  tex.draw(sp);
 
   tex.display();
 }
@@ -91,7 +91,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Demo", sf::Style::Default);
     window.setFramerateLimit(60);
     sf::RenderTexture renderTex;
-    renderTex.create(200, 200);
+    renderTex.create(800, 800);
     makeDrawing(renderTex);
     sf::Thread displayThread(displayHandler, renderTex.getTexture());
     sf::Cursor cursor;
@@ -180,11 +180,11 @@ int main()
       for(unsigned i=0;i<16;i++)
       {
         triangle[0].position = sf::Vector2f(400.0f, 400.0f);
-        triangle[0].texCoords = sf::Vector2f(100.0f, 100.0f);
+        triangle[0].texCoords = sf::Vector2f(400.0f, 400.0f);
         triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/8.0)), 400.0f+400.f*sin(i*(M_PI/8.0)));
-        triangle[i%2+1].texCoords = sf::Vector2f(100.0f+100.f*cos((i%2)*(M_PI/8.0)+angle), 100.0f+100.f*sin((i%2)*(M_PI/8.0)+angle));
+        triangle[i%2+1].texCoords = sf::Vector2f(400.0f+400.f*cos((i%2)*(M_PI/8.0)+angle), 400.0f+400.f*sin((i%2)*(M_PI/8.0)+angle));
         triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/8.0)), 400.0f+400.f*sin((i+1)*(M_PI/8.0)));
-        triangle[i%2+1].texCoords = sf::Vector2f(100.0f+100.f*cos((i%2)*(M_PI/8.0)+angle), 100.0f+100.f*sin((i%2)*(M_PI/8.0)+angle));
+        triangle[i%2+1].texCoords = sf::Vector2f(400.0f+400.f*cos((i%2)*(M_PI/8.0)+angle), 400.0f+400.f*sin((i%2)*(M_PI/8.0)+angle));
         window.draw(triangle, &renderTex.getTexture());
       }
 

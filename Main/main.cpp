@@ -7,21 +7,16 @@
 /**
 //opcjonalnie
 display
-
 dodaj os
 odejmij os
-
 //opcjonalnie
 animacja start
 animacja stop
-
 generuj bmp
-
 zamknij
-
-k¹t pod suwakiem
+kÅ¡t pod suwakiem
 //roz
-przesuniêcie ox oY w %
+przesuniÄ™cie ox oY w %
 */
 
 /**
@@ -61,12 +56,12 @@ void makeDrawing(sf::RenderTexture& tex)
 {
   sf::CircleShape c(30.0f);
   sf::Texture im;
-  im.loadFromFile("Files/slimakiv2.png");
+  im.loadFromFile("Files/Testowy.jpg");
   sf::Sprite sp;
   sp.setTexture(im);
   sp.scale(0.2, 0.2);
 
-  /*tex.clear(sf::Color::Transparent);
+  tex.clear(sf::Color::Transparent);
 
   c.setFillColor(sf::Color::Red);
   c.setOutlineColor(sf::Color::Black);
@@ -100,9 +95,9 @@ void makeDrawing(sf::RenderTexture& tex)
   c.setOutlineThickness(1.0f);
   c.setPosition(55.0f, 55.0f);
   c.setPointCount(8);
-  tex.draw(c);*/
+  tex.draw(c);
 
-  tex.draw(sp);
+  //tex.draw(sp);
 
   tex.display();
 }
@@ -128,43 +123,39 @@ int main()
     sf::Event evnt;
     sf::Clock clock;
     float deltaTime=0.0;
-    float angle=0.0f;
-    float speed=M_PI/25.0;
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 7);
+    float speed=0.0;
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 4);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
-    //---
     sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
     sidemenu.buttons[2].setLabelString("Stop");
-
-    sidemenu.buttons[3].setLabelString("+1");
-    sidemenu.buttons[4].setLabelString("-1");
-    sidemenu.buttons[5].setLabelString("Generuj");
-
-    sidemenu.buttons[6].setLabelString("Off");
-    sidemenu.buttons[6].flags ^= AButtonCircle::showLabel;
-    sidemenu.buttons[6].setTextureRect(sf::IntRect(0, 0, 256, 256));
-    sidemenu.buttons[6].loadTextureFromFile("Files/OnOff.png");
+    sidemenu.buttons[3].setLabelString("Off");
+    sidemenu.buttons[3].flags ^= AButtonCircle::showLabel;
+    sidemenu.buttons[3].setTextureRect(sf::IntRect(0, 0, 256, 256));
+    sidemenu.buttons[3].loadTextureFromFile("Files/OnOff.png");
 
     sf::VertexArray triangle(sf::Triangles, 3);
     Container datastorage;
     //do konstruktora
-   
-    //datastorage.needUpdate=true;
-    datastorage.set_oryginal("Files/slimakiv2.png");
-    datastorage.create_Texture();
-    //datastorage.piksele=new sf::Uint8[datastorage.get_dw()*datastorage.get_dh()*4];
-
-    for(unsigned i=0;i<datastorage.get_dh();i++)
+    datastorage.dw = 800;
+    datastorage.dh = 800;
+    datastorage.tw = 1135;//dw*sqrt(2)
+    datastorage.th = 1135;//dh*sqrt(2)
+    datastorage.angle=0.0;
+    datastorage.NoAxis=8;
+    datastorage.needUpdate=true;
+    datastorage.oryginal.loadFromFile("Files/slimakiv2.png");
+    datastorage.display.create(datastorage.dw, datastorage.dh);
+    datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
+    for(unsigned i=0;i<datastorage.dh;i++)
     {
-      for(unsigned j=0;j<datastorage.get_dw();j++)
+      for(unsigned j=0;j<datastorage.dw;j++)
       {
-        /*datastorage.piksele[4*(i*datastorage.get_dw() + j) + 3]=255;*/
-        datastorage.set_idx_piks(4 * (i * datastorage.get_dw() + j) + 3, 255);
+        datastorage.piksele[4*(i*datastorage.dw + j) + 3]=255;
       }
     }
     sf::Sprite display;
-    display.setTexture(datastorage.get_Texture());
+    display.setTexture(datastorage.display);
 
     //-----------------------------------------------------------------------------------------------------------
     //         Beware!      Debug zone
@@ -177,15 +168,13 @@ int main()
     while(window.isOpen())
     {
       deltaTime=clock.restart().asSeconds();
-      datastorage.moveAngle(deltaTime, speed);
-      //datastorage.angle+=deltaTime*speed;
-      //datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
-      //datastorage.needUpdate=true;
-      datastorage.needUpdate = true;
-
+      // do moveAngle
+      datastorage.angle+=deltaTime*speed;
+      datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
+      if(speed != 0.0)
+        datastorage.needUpdate=true;
       while(window.pollEvent(evnt))
       {
-        
         switch (evnt.type)
         {
         case sf::Event::Closed:
@@ -223,39 +212,6 @@ int main()
                 }break;
                 case 3:
                 {
-                    datastorage.add_Axis();
-                }break;
-                case 4:
-                {
-                    datastorage.sub_Axis();
-                }break;
-                case 5:
-                {
-                    speed = 0.0f;
-                    const std::string filename = "nazwabitmapy";
-                    const std::string rozsz = ".png";
-                    float tempSpeed = 2.0* M_PI / 100.0;
-                    
-                    //generuj bitmapê, czyli 100 obrazków
-                    sf::Image bitmap;
-                    
-                    for (int i = 1; i <= 4; i++) {
-                        datastorage.moveAngle(1, tempSpeed);
-                        datastorage.update();
-                        window.draw(display);
-                        bitmap = datastorage.get_Texture().copyToImage();
-
-                        if (i < 10) {
-                            bitmap.saveToFile(filename + "00" + std::to_string(i) + rozsz);
-                        } else if (i < 100) {
-                            bitmap.saveToFile(filename + "0"+std::to_string(i) + rozsz);
-                        } else {
-                            bitmap.saveToFile(filename + std::to_string(i) + rozsz);
-                        }
-                    }
-                }break;
-                case 6:
-                {
                   displayThread.terminate();
                   window.close();
                 }break;
@@ -272,8 +228,6 @@ int main()
 
       }
       window.clear(sf::Color(64,64,64));
-
-     
 
       datastorage.update();
       window.draw(display);
@@ -296,6 +250,6 @@ int main()
       window.display();
 
     }
-    //delete[] datastorage.piksele;
+    delete[] datastorage.piksele;
     return 0;
 }
