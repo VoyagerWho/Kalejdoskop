@@ -173,6 +173,7 @@ float InteractiveObject::getOutlineThickness() const
 void InteractiveObject::setLabelCharacterSize(const unsigned& val)
 {
   label.setCharacterSize(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -209,6 +210,7 @@ sf::Color InteractiveObject::getLabelOutlineColor() const
 void InteractiveObject::setLabelOutlineThickness(const float& val)
 {
   label.setOutlineThickness(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -221,6 +223,7 @@ float InteractiveObject::getLabelOutlineThickness() const
 void InteractiveObject::setLabelString(const sf::String& val)
 {
   label.setString(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -233,6 +236,7 @@ sf::String InteractiveObject::getLabelString() const
 void InteractiveObject::setLabelStyle(const sf::Uint32& val)
 {
   label.setStyle(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -258,6 +262,7 @@ sf::Vector2f InteractiveObject::getLabelOffset() const
 void InteractiveObject::setLabelRotation(const float& val)
 {
   label.setRotation(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 
@@ -269,6 +274,7 @@ float InteractiveObject::getLabelRotation() const
 void InteractiveObject::setLabelScale(const sf::Vector2f& val)
 {
   label.setScale(val);
+  alignLabel();
 }
 //-----------------------------------------------------------------------------------------------------------
 

@@ -58,10 +58,10 @@
 	<SFML/Graphics.hpp>
 	<vector>
 
-1621714852 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
+1621715548 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
 	"Interpolate.h"
 
-1621710179 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
+1621715925 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
 	<iostream>
 	<cmath>
 	<SFML/Graphics.hpp>

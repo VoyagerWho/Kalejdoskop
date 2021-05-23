@@ -26,12 +26,15 @@ to do
 suwak
 */
 
-void displayHandler(const sf::Texture& tex)
+void displayHandler(const sf::Image& org)
 {
-  sf::RenderWindow window(sf::VideoMode(200, 200), "Display", sf::Style::Default);
+  sf::RenderWindow window(sf::VideoMode(org.getSize().x, org.getSize().y), "Display", sf::Style::Default);
   window.setFramerateLimit(30);
   sf::Event evnt;
   sf::Sprite sp;
+  sf::Texture tex;
+  tex.create(org.getSize().x, org.getSize().y);
+  tex.update(org);
   sp.setTexture(tex);
   while(window.isOpen())
   {
@@ -54,70 +57,22 @@ void displayHandler(const sf::Texture& tex)
   }
 }
 
-void makeDrawing(sf::RenderTexture& tex)
-{
-  sf::CircleShape c(30.0f);
-  sf::Texture im;
-  im.loadFromFile("Files/Testowy.jpg");
-  sf::Sprite sp;
-  sp.setTexture(im);
-  sp.scale(0.2, 0.2);
-
-  tex.clear(sf::Color::Transparent);
-
-  c.setFillColor(sf::Color::Red);
-  c.setOutlineColor(sf::Color::Black);
-  c.setOutlineThickness(1.0f);
-  c.setPosition(85.0f, 85.0f);
-  tex.draw(c);
-
-  c.setFillColor(sf::Color::Blue);
-  c.setOutlineColor(sf::Color::Black);
-  c.setOutlineThickness(1.0f);
-  c.setPosition(115.0f, 55.0f);
-  c.setPointCount(3);
-  tex.draw(c);
-
-  c.setFillColor(sf::Color::Green);
-  c.setOutlineColor(sf::Color::Black);
-  c.setOutlineThickness(1.0f);
-  c.setPosition(55.0f, 115.0f);
-  c.setPointCount(4);
-  tex.draw(c);
-
-  c.setFillColor(sf::Color::Magenta);
-  c.setOutlineColor(sf::Color::Black);
-  c.setOutlineThickness(1.0f);
-  c.setPosition(115.0f, 115.0f);
-  c.setPointCount(6);
-  tex.draw(c);
-
-  c.setFillColor(sf::Color::Cyan);
-  c.setOutlineColor(sf::Color::Black);
-  c.setOutlineThickness(1.0f);
-  c.setPosition(55.0f, 55.0f);
-  c.setPointCount(8);
-  tex.draw(c);
-
-  //tex.draw(sp);
-
-  tex.display();
-}
-
 int main()
 {
+    //-----------------------------------------------------------------------------------------------------------
+    // SFML stuff
+    //-----------------------------------------------------------------------------------------------------------
     sf::RenderWindow window(sf::VideoMode(800, 800), "Kalejdoskop", sf::Style::Default);
     window.setFramerateLimit(60);
-    sf::RenderTexture renderTex;
-    renderTex.create(200, 200);
-    makeDrawing(renderTex);
-    sf::Thread displayThread(displayHandler, renderTex.getTexture());
     sf::Cursor cursor;
     sf::Event evnt;
     sf::Clock clock;
-    float deltaTime=0.0;
-    float speed=0.0;
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 8);
+    //-----------------------------------------------------------------------------------------------------------
+
+    //-----------------------------------------------------------------------------------------------------------
+    // GUI stuff
+    //-----------------------------------------------------------------------------------------------------------
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 10);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
     sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
@@ -126,11 +81,14 @@ int main()
     sidemenu.buttons[4].setLabelString("-1");
     sidemenu.buttons[5].setLabelString("Zapisz");
     sidemenu.buttons[6].setLabelString("Generuj");
+    sidemenu.buttons[7].setLabelString("CPU");
+    sidemenu.buttons[8].setLabelString("GPU");
 
-    sidemenu.buttons[7].setLabelString("Off");
-    sidemenu.buttons[7].flags ^= AButtonCircle::showLabel;
-    sidemenu.buttons[7].setTextureRect(sf::IntRect(0, 0, 256, 256));
-    sidemenu.buttons[7].loadTextureFromFile("Files/OnOff.png");
+    sidemenu.buttons[9].setLabelString("Off");
+    sidemenu.buttons[9].flags ^= AButtonCircle::showLabel;
+    sidemenu.buttons[9].setTextureRect(sf::IntRect(0, 0, 256, 256));
+    sidemenu.buttons[9].loadTextureFromFile("Files/OnOff.png");
+    //sidemenu.setPosition(window);
 
     Scrollbar scrollAngle(0.0, 2*M_PI);
     scrollAngle.setPosition(sf::Vector2f(590.0f, 770.0f));
@@ -140,8 +98,15 @@ int main()
     TextEdit edit1(sf::Vector2f(600.0f, 10.0f), (unsigned)9);
     edit1.visible = true;
     TextEdit* activeEdit = nullptr;
+    //-----------------------------------------------------------------------------------------------------------
 
 
+    //-----------------------------------------------------------------------------------------------------------
+    // Misc stuff
+    //-----------------------------------------------------------------------------------------------------------
+    float deltaTime=0.0;
+    float speed=0.0;
+    bool GPUacceleration=false;
     sf::VertexArray triangle(sf::Triangles, 3);
     Container datastorage;
     //do konstruktora
@@ -164,6 +129,12 @@ int main()
     }
     sf::Sprite display;
     display.setTexture(datastorage.display);
+    sf::Thread displayThread(displayHandler, datastorage.oryginal);
+    sf::Texture oryginalTex;
+    oryginalTex.create(datastorage.tw, datastorage.th);
+    oryginalTex.update(datastorage.oryginal);
+    //-----------------------------------------------------------------------------------------------------------
+
 
     //-----------------------------------------------------------------------------------------------------------
     //         Beware!      Debug zone
@@ -303,6 +274,14 @@ int main()
                 }break;
                 case 7:
                 {
+                  GPUacceleration=false;
+                }break;
+                case 8:
+                {
+                  GPUacceleration=true;
+                }break;
+                case 9:
+                {
                   displayThread.terminate();
                   window.close();
                 }break;
@@ -327,25 +306,30 @@ int main()
         activeEdit->update(deltaTime);
       window.clear(sf::Color(64,64,64));
 
-      datastorage.update();
-      window.draw(display);
+      if(GPUacceleration)
+      {
+        double tx=datastorage.tw/2.0, ty=datastorage.th/2.0;
+        for(unsigned i=0;i<2*datastorage.NoAxis;i++)
+        {
+          triangle[0].position = sf::Vector2f(400.0f, 400.0f);
+          triangle[0].texCoords = sf::Vector2f(tx, ty);
+          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/datastorage.NoAxis)), 400.0f+400.f*sin(i*(M_PI/datastorage.NoAxis)));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle), ty+tx*sin((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle));
+          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/datastorage.NoAxis)), 400.0f+400.f*sin((i+1)*(M_PI/datastorage.NoAxis)));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle), tx+ty*sin((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle));
+          window.draw(triangle, &oryginalTex);
+        }
+      }
+      else
+      {
+        datastorage.update();
+        window.draw(display);
+      }
 
       sidemenu.update(deltaTime);
       window.draw(sidemenu);
       window.draw(edit1);
       window.draw(scrollAngle);
-
-//      for(unsigned i=0;i<16;i++)
-//      {
-//        triangle[0].position = sf::Vector2f(400.0f, 400.0f);
-//        triangle[0].texCoords = sf::Vector2f(100.0f, 100.0f);
-//        triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/8.0)), 400.0f+400.f*sin(i*(M_PI/8.0)));
-//        triangle[i%2+1].texCoords = sf::Vector2f(100.0f+100.f*cos((i%2)*(M_PI/8.0)+angle), 100.0f+100.f*sin((i%2)*(M_PI/8.0)+angle));
-//        triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/8.0)), 400.0f+400.f*sin((i+1)*(M_PI/8.0)));
-//        triangle[i%2+1].texCoords = sf::Vector2f(100.0f+100.f*cos((i%2)*(M_PI/8.0)+angle), 100.0f+100.f*sin((i%2)*(M_PI/8.0)+angle));
-//        window.draw(triangle, &renderTex.getTexture());
-//      }
-
 
       window.display();
 
