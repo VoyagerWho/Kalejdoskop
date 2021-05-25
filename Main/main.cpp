@@ -90,10 +90,22 @@ int main()
     sidemenu.buttons[9].loadTextureFromFile("Files/OnOff.png");
     //sidemenu.setPosition(window);
 
+    Scrollbar scrollPosX(-100.0, 100.0);
+    scrollPosX.setPosition(sf::Vector2f(10.0f, 770.0f));
+    scrollPosX.setSize(sf::Vector2f(200.0f, 20.0f));
+    scrollPosX.setLabelString("X: 0");
+    
+    Scrollbar scrollPosY(-100.0, 100.0);
+    scrollPosY.setPosition(sf::Vector2f(300.0f, 770.0f));
+    scrollPosY.setSize(sf::Vector2f(200.0f, 20.0f));
+    scrollPosY.setLabelString("Y: 0");
+
     Scrollbar scrollAngle(0.0, 2*M_PI);
     scrollAngle.setPosition(sf::Vector2f(590.0f, 770.0f));
     scrollAngle.setSize(sf::Vector2f(200.0f, 20.0f));
-    scrollAngle.setLabelString("Kat");
+    scrollAngle.setLabelString("Kat: 0");
+
+    
 
     TextEdit edit1(sf::Vector2f(600.0f, 10.0f), (unsigned)9);
     edit1.visible = true;
@@ -186,6 +198,10 @@ int main()
               cursor.loadFromSystem(sf::Cursor::Hand);
             if(scrollAngle.onHover(evnt))
               cursor.loadFromSystem(sf::Cursor::Hand);
+            if (scrollPosX.onHover(evnt))
+                cursor.loadFromSystem(sf::Cursor::Hand);
+            if (scrollPosY.onHover(evnt))
+                cursor.loadFromSystem(sf::Cursor::Hand);
 //            if(edit1.isInActiveZone(sf::Vector2f(evnt.mouseMove.x,evnt.mouseMove.y)));
 //            {
 //              cursor.loadFromSystem(sf::Cursor::Text);
@@ -293,7 +309,20 @@ int main()
             if(scrollAngle.onClick(evnt))
             {
               datastorage.angle=scrollAngle.getValue();
+              scrollAngle.setLabelString("Kat: "+std::to_string(static_cast<int>(datastorage.angle*360/(2*M_PI)))+" stopni");
               datastorage.needUpdate=true;
+            }
+            if (scrollPosX.onClick(evnt))
+            {
+                datastorage.offsetX = scrollPosX.getValue();
+                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.offsetX)));
+                datastorage.needUpdate = true;
+            }
+            if (scrollPosY.onClick(evnt))
+            {
+                datastorage.offsetY = scrollPosY.getValue();
+                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.offsetY)));
+                datastorage.needUpdate = true;
             }
           }break;
 
@@ -330,7 +359,8 @@ int main()
       window.draw(sidemenu);
       window.draw(edit1);
       window.draw(scrollAngle);
-
+      window.draw(scrollPosX);
+      window.draw(scrollPosY);
       window.display();
 
     }
