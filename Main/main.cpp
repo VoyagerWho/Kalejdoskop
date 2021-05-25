@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -124,12 +125,19 @@ int main()
     //do konstruktora
     datastorage.dw = 800;
     datastorage.dh = 800;
-    datastorage.tw = 800;//dw*sqrt(2)
-    datastorage.th = 800;//dh*sqrt(2)
     datastorage.angle=0.0;
     datastorage.NoAxis=8;
     datastorage.needUpdate=true;
-    datastorage.oryginal.loadFromFile("Files/Kalejdoskop.png");
+    //--
+    std::fstream fs;
+    fs.open("Setup.cfg");
+    std::string nazwaPliku;
+    getline(fs, nazwaPliku);
+    fs.close();
+    datastorage.oryginal.loadFromFile(nazwaPliku);
+    //--
+    datastorage.tw = datastorage.oryginal.getSize().x;
+    datastorage.th = datastorage.oryginal.getSize().y;
     datastorage.display.create(datastorage.dw, datastorage.dh);
     datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
     for(unsigned i=0;i<datastorage.dh;i++)
