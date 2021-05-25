@@ -3,7 +3,7 @@
 TextEdit::TextEdit()
 {
   //ctor
-  font.loadFromFile("C:/Windows/Fonts/monos.ttf");
+  font.loadFromFile("Files/defaultFont.ttf");
 
   text = sf::Text("Edit", font);
   text.setOrigin(-5.0f, 0.0f);
@@ -30,7 +30,7 @@ TextEdit::TextEdit()
 TextEdit::TextEdit(const sf::Vector2f& position, const float& length)
 {
   //ctor
-  font.loadFromFile("C:/Windows/Fonts/monos.ttf");
+  font.loadFromFile("Files/defaultFont.ttf");
   text = sf::Text("Edit", font);
   text.setOrigin(-5.0f, 0.0f);
   text.setPosition(position);
@@ -59,7 +59,7 @@ TextEdit::TextEdit(const sf::Vector2f& position, const unsigned int& charNumber)
 :maxStringLength(charNumber)
 {
   //ctor
-  font.loadFromFile("C:/Windows/Fonts/monos.ttf");
+  font.loadFromFile("Files/defaultFont.ttf");
   text = sf::Text("Edit", font);
   text.setOrigin(-5.0f, 0.0f);
   text.setPosition(position);
