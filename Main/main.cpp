@@ -73,9 +73,10 @@ int main()
     //-----------------------------------------------------------------------------------------------------------
     // GUI stuff
     //-----------------------------------------------------------------------------------------------------------
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 10);
+
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 11);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
-    sidemenu.buttons[0].setLabelString("Display");
+    /*sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
     sidemenu.buttons[2].setLabelString("Stop");
     sidemenu.buttons[3].setLabelString("+1");
@@ -84,11 +85,26 @@ int main()
     sidemenu.buttons[6].setLabelString("Generuj");
     sidemenu.buttons[7].setLabelString("CPU");
     sidemenu.buttons[8].setLabelString("GPU");
+    sidemenu.buttons[9].setLabelString("Reset");
+    sidemenu.buttons[10].setLabelString("Off");*/
 
-    sidemenu.buttons[9].setLabelString("Off");
-    sidemenu.buttons[9].flags ^= AButtonCircle::showLabel;
-    sidemenu.buttons[9].setTextureRect(sf::IntRect(0, 0, 256, 256));
-    sidemenu.buttons[9].loadTextureFromFile("Files/OnOff.png");
+    for (int i = 0; i < 11; i++) {
+        sidemenu.buttons[i].flags ^= AButtonCircle::showLabel;
+        sidemenu.buttons[i].setTextureRect(sf::IntRect(0, 0, 256, 256));
+    }
+
+    sidemenu.buttons[0].loadTextureFromFile("Files/Buttons/display.png");
+    sidemenu.buttons[1].loadTextureFromFile("Files/Buttons/start.png");
+    sidemenu.buttons[2].loadTextureFromFile("Files/Buttons/stop.png");
+    sidemenu.buttons[3].loadTextureFromFile("Files/Buttons/plus.png");
+    sidemenu.buttons[4].loadTextureFromFile("Files/Buttons/minus.png");
+    sidemenu.buttons[5].loadTextureFromFile("Files/Buttons/save.png");
+    sidemenu.buttons[6].loadTextureFromFile("Files/Buttons/generujBitmapy.png");
+    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/cpu.png");
+    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/gpu.png");
+    sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/reset.png");
+    sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/OnOff.png");
+    
     //sidemenu.setPosition(window);
 
     Scrollbar scrollPosX(-100.0, 100.0);
@@ -105,8 +121,6 @@ int main()
     scrollAngle.setPosition(sf::Vector2f(590.0f, 770.0f));
     scrollAngle.setSize(sf::Vector2f(200.0f, 20.0f));
     scrollAngle.setLabelString("Kat: 0");
-
-    
 
     TextEdit edit1(sf::Vector2f(600.0f, 10.0f), (unsigned)9);
     edit1.visible = true;
@@ -306,10 +320,13 @@ int main()
                 }break;
                 case 9:
                 {
-                  displayThread.terminate();
-                  window.close();
+                  ///TODO!!!!!!!!!!!!
                 }break;
-
+                case 10:
+                {
+                    displayThread.terminate();
+                    window.close();
+                }break;
                 default:
                   break;
               }
