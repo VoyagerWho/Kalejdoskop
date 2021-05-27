@@ -7,25 +7,6 @@
 #include "Classes/TextEdit.h"
 #include "Utility/Interpolate.h"
 
-/**
-//opcjonalnie
-display
-dodaj os
-odejmij os
-//opcjonalnie
-animacja start
-animacja stop
-generuj bmp
-zamknij
-kšt pod suwakiem
-//roz
-przesunięcie ox oY w %
-*/
-
-/**
-to do
-suwak
-*/
 
 void displayHandler(const sf::Image& org)
 {
@@ -292,12 +273,12 @@ int main()
                 }break;
                 case 9:
                 {
-                  ///TODO!!!!!!!!!!!!
+                  datastorage.refresh();
                 }break;
                 case 10:
                 {
-                    displayThread.terminate();
-                    window.close();
+                  displayThread.terminate();
+                   window.close();
                 }break;
                 default:
                   break;
@@ -312,13 +293,13 @@ int main()
             if (scrollPosX.onClick(evnt))
             {
                 datastorage.set_offsetX(scrollPosX.getValue());
-                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())));
+                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX()))+"%");
                 datastorage.needUpdate = true;
             }
             if (scrollPosY.onClick(evnt))
             {
                 datastorage.set_offsetY(scrollPosY.getValue());
-                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())));
+                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY()))+"%");
                 datastorage.needUpdate = true;
             }
           }break;

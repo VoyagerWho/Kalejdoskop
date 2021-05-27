@@ -6,11 +6,16 @@ Container::Container(std::string file_name)
     dh = 800;
     angle = 0.0;
     NoAxis = 8;
+    offsetX = 0;
+    offsetY = 0;
+
     needUpdate = true;
+
     oryginal.loadFromFile(file_name);
     tw = oryginal.getSize().x;
     th = oryginal.getSize().y;
     display.create(dw, dh);
+    
     piksele = new sf::Uint8[dw*dh*4];
     for(unsigned i=0;i<dh;i++)
     {
@@ -72,16 +77,6 @@ void Container::moveAngle(float deltaTime, float speed)
   angle = angle > 2*M_PI ? angle - 2*M_PI : angle;
 }
 
-void Container::add_Axis(){
-  if(NoAxis<20) NoAxis++;
-  needUpdate = true;
-}
-
-void Container::sub_Axis(){
-  if(NoAxis>1)NoAxis--;
-  needUpdate = true;
-}
-
 sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 {
   //std::cout<<"Calculations:"<<std::endl;
@@ -90,6 +85,8 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
   double theta = M_PI/double(ds.NoAxis);
   //std::cout<<"Theta: "<<theta<<std::endl;
   sf::Vector2f ofcenter = posDis-middleDis;
+  ofcenter.x += ds.offsetX*0.01*ds.tw; 
+  ofcenter.y += ds.offsetY*0.01*ds.th;
   double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
   //std::cout<<"Phi: "<<phi<<std::endl;
   unsigned part = int(phi/theta);
@@ -108,6 +105,24 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
   }
   //std::cout<<"Alpha: "<<alpha<<std::endl;
   return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleTex;
+}
+
+void Container::add_Axis(){
+  if(NoAxis<20) NoAxis++;
+  needUpdate = true;
+}
+
+void Container::sub_Axis(){
+  if(NoAxis>1)NoAxis--;
+  needUpdate = true;
+}
+
+void Container::refresh(){
+  angle = 0.0;
+  NoAxis = 8;
+  offsetX = 0;
+  offsetY = 0;
+  needUpdate = true;
 }
 
 sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
