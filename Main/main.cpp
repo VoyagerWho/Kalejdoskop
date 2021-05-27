@@ -135,38 +135,20 @@ int main()
     float speed=0.0;
     bool GPUacceleration=false;
     sf::VertexArray triangle(sf::Triangles, 3);
-    Container datastorage;
-    //do konstruktora
-    datastorage.dw = 800;
-    datastorage.dh = 800;
-    datastorage.angle=0.0;
-    datastorage.NoAxis=8;
-    datastorage.needUpdate=true;
     //--
     std::fstream fs;
     fs.open("Setup.cfg");
     std::string nazwaPliku;
     getline(fs, nazwaPliku);
     fs.close();
-    datastorage.oryginal.loadFromFile(nazwaPliku);
     //--
-    datastorage.tw = datastorage.oryginal.getSize().x;
-    datastorage.th = datastorage.oryginal.getSize().y;
-    datastorage.display.create(datastorage.dw, datastorage.dh);
-    datastorage.piksele=new sf::Uint8[datastorage.dw*datastorage.dh*4];
-    for(unsigned i=0;i<datastorage.dh;i++)
-    {
-      for(unsigned j=0;j<datastorage.dw;j++)
-      {
-        datastorage.piksele[4*(i*datastorage.dw + j) + 3]=255;
-      }
-    }
+    Container datastorage(nazwaPliku);
     sf::Sprite display;
-    display.setTexture(datastorage.display);
-    sf::Thread displayThread(displayHandler, datastorage.oryginal);
+    display.setTexture(datastorage.get_display());
+    sf::Thread displayThread(displayHandler, datastorage.get_oryginal());
     sf::Texture oryginalTex;
-    oryginalTex.create(datastorage.tw, datastorage.th);
-    oryginalTex.update(datastorage.oryginal);
+    oryginalTex.create(datastorage.get_tw(), datastorage.get_th());
+    oryginalTex.update(datastorage.get_oryginal());
     //-----------------------------------------------------------------------------------------------------------
 
 
@@ -179,9 +161,8 @@ int main()
     while(window.isOpen())
     {
       deltaTime=clock.restart().asSeconds();
-      // do moveAngle
-      datastorage.angle+=deltaTime*speed;
-      datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;//zrobic metode w klasie
+      datastorage.moveAngle(deltaTime, speed);
+     
       if(speed != 0.0)
         datastorage.needUpdate=true;
       while(window.pollEvent(evnt))
@@ -268,23 +249,15 @@ int main()
                 }break;
                 case 3:
                 {
-                  if(datastorage.NoAxis<20)
-                  {
-                    datastorage.NoAxis++;
-                    datastorage.needUpdate=true;
-                  }
+                  datastorage.add_Axis();
                 }break;
                 case 4:
                 {
-                  if(datastorage.NoAxis>1)
-                  {
-                    datastorage.NoAxis--;
-                    datastorage.needUpdate=true;
-                  }
+                  datastorage.sub_Axis();
                 }break;
                 case 5:
                 {
-                  datastorage.display.copyToImage().saveToFile("Output/preview.png");
+                  datastorage.get_display().copyToImage().saveToFile("Output/preview.png");
                 }break;
                 case 6:
                 {
@@ -297,16 +270,15 @@ int main()
 
                   for (int i = 1; i <= 100; i++)
                   {
-                    datastorage.angle+=tempSpeed;
-                    datastorage.angle = datastorage.angle > 2*M_PI ? datastorage.angle - 2*M_PI : datastorage.angle;
+                    datastorage.moveAngle(deltaTime, 1);
                     datastorage.needUpdate=true;
                     datastorage.update();
                     if (i < 10) {
-                        datastorage.display.copyToImage().saveToFile(filename + "00" + std::to_string(i) + rozsz);
+                        datastorage.get_display().copyToImage().saveToFile(filename + "00" + std::to_string(i) + rozsz);
                     } else if (i < 100) {
-                        datastorage.display.copyToImage().saveToFile(filename + "0"+std::to_string(i) + rozsz);
+                        datastorage.get_display().copyToImage().saveToFile(filename + "0"+std::to_string(i) + rozsz);
                     } else {
-                        datastorage.display.copyToImage().saveToFile(filename + std::to_string(i) + rozsz);
+                        datastorage.get_display().copyToImage().saveToFile(filename + std::to_string(i) + rozsz);
                     }
                   }
                 }break;
@@ -333,20 +305,20 @@ int main()
             }
             if(scrollAngle.onClick(evnt))
             {
-              datastorage.angle=scrollAngle.getValue();
-              scrollAngle.setLabelString("Kat: "+std::to_string(static_cast<int>(datastorage.angle*360/(2*M_PI)))+" stopni");
+              datastorage.set_angle(scrollAngle.getValue());
+              scrollAngle.setLabelString("Kat: "+std::to_string(static_cast<int>(datastorage.get_angle()*360/(2*M_PI)))+" stopni");
               datastorage.needUpdate=true;
             }
             if (scrollPosX.onClick(evnt))
             {
-                datastorage.offsetX = scrollPosX.getValue();
-                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.offsetX)));
+                datastorage.set_offsetX(scrollPosX.getValue());
+                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())));
                 datastorage.needUpdate = true;
             }
             if (scrollPosY.onClick(evnt))
             {
-                datastorage.offsetY = scrollPosY.getValue();
-                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.offsetY)));
+                datastorage.set_offsetY(scrollPosY.getValue());
+                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())));
                 datastorage.needUpdate = true;
             }
           }break;
@@ -362,15 +334,15 @@ int main()
 
       if(GPUacceleration)
       {
-        double tx=datastorage.tw/2.0, ty=datastorage.th/2.0;
-        for(unsigned i=0;i<2*datastorage.NoAxis;i++)
+        double tx=datastorage.get_tw()/2.0, ty=datastorage.get_th()/2.0;
+        for(unsigned i=0;i<2*datastorage.get_NoAxis();i++)
         {
           triangle[0].position = sf::Vector2f(400.0f, 400.0f);
           triangle[0].texCoords = sf::Vector2f(tx, ty);
-          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/datastorage.NoAxis)), 400.0f+400.f*sin(i*(M_PI/datastorage.NoAxis)));
-          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle), ty+tx*sin((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle));
-          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/datastorage.NoAxis)), 400.0f+400.f*sin((i+1)*(M_PI/datastorage.NoAxis)));
-          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle), tx+ty*sin((i%2)*(M_PI/datastorage.NoAxis)+datastorage.angle));
+          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/datastorage.get_NoAxis())), 400.0f+400.f*sin(i*(M_PI/datastorage.get_NoAxis())));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), ty+tx*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
+          triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/datastorage.get_NoAxis())), 400.0f+400.f*sin((i+1)*(M_PI/datastorage.get_NoAxis())));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), tx+ty*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
           window.draw(triangle, &oryginalTex);
         }
       }
@@ -389,6 +361,5 @@ int main()
       window.display();
 
     }
-    delete[] datastorage.piksele;
-    return 0;
+    delete[] datastorage.piksele;    
 }

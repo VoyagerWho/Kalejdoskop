@@ -1,57 +1,29 @@
 #include "Interpolate.h"
 
-sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
+Container::Container(std::string file_name)
 {
-	//std::cout<<"Calculations:"<<std::endl;
-	sf::Vector2f middleDis(ds.dw/2.0, ds.dh/2.0);
-	sf::Vector2f middleTex(ds.tw/2.0, ds.th/2.0);
-	double theta = M_PI/double(ds.NoAxis);
-	//std::cout<<"Theta: "<<theta<<std::endl;
-	sf::Vector2f ofcenter = posDis-middleDis;
-	double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
-	//std::cout<<"Phi: "<<phi<<std::endl;
-	unsigned part = int(phi/theta);
-	//std::cout<<"part: "<<part<<std::endl;
-	double radiusD = sqrt(ofcenter.y*ofcenter.y+ ofcenter.x*ofcenter.x);
-	//std::cout<<"R: "<<radiusD<<std::endl;
-	double radiusT = radiusD*(double(ds.tw-2)/double(ds.dw))*0.7071;
-	double alpha;
-	if(part & 1)
-	{
-		alpha = phi - part*theta;
-	}
-	else
-	{
-		alpha = (part+1)*theta - phi;
-	}
-	//std::cout<<"Alpha: "<<alpha<<std::endl;
-	return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleTex;
+    dw = 800;
+    dh = 800;
+    angle = 0.0;
+    NoAxis = 8;
+    needUpdate = true;
+    oryginal.loadFromFile(file_name);
+    tw = oryginal.getSize().x;
+    th = oryginal.getSize().y;
+    display.create(dw, dh);
+    piksele = new sf::Uint8[dw*dh*4];
+    for(unsigned i=0;i<dh;i++)
+    {
+      for(unsigned j=0;j<dw;j++)
+      {
+        piksele[4*(i*dw + j) + 3]=255;
+      }
+    }
 }
 
-sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
+Container::~Container()
 {
-  int x1 = int(pos.x);
-  int y1 = int(pos.y);
-  x1 = x1<0 ? ds.tw+x1 : x1;
-  y1 = y1<0 ? ds.th+y1 : y1;
-  x1 = x1>=ds.tw ? x1 - ds.tw : x1;
-  y1 = y1>=ds.th ? y1 - ds.th : y1;
-  int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
-  int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
-  double decX = pos.x - float(x1);
-  double decY = pos.y - float(y1);
-
-  sf::Color a11, a12, a21, a22;
-  a11 = ds.oryginal.getPixel(x1, y1);
-  a12 = ds.oryginal.getPixel(x2, y1);
-  a21 = ds.oryginal.getPixel(x1, y2);
-  a22 = ds.oryginal.getPixel(x2, y2);
-
-  sf::Color result;
-  result.r=(1-decY)*(1-decX)*a11.r + (1-decY)*(decX)*a12.r + (decY)*(1-decX)*a21.r + (decY)*(decX)*a22.r;
-  result.g=(1-decY)*(1-decX)*a11.g + (1-decY)*(decX)*a12.g + (decY)*(1-decX)*a21.g + (decY)*(decX)*a22.g;
-  result.b=(1-decY)*(1-decX)*a11.b + (1-decY)*(decX)*a12.b + (decY)*(1-decX)*a21.b + (decY)*(decX)*a22.b;
-  return result;
+  //delete[] piksele;
 }
 
 void Container::update()
@@ -92,6 +64,76 @@ void Container::update()
     display.update(piksele);
   }
 
+}
+
+void Container::moveAngle(float deltaTime, float speed)
+{
+  angle += deltaTime*speed;
+  angle = angle > 2*M_PI ? angle - 2*M_PI : angle;
+}
+
+void Container::add_Axis(){
+  if(NoAxis<20) NoAxis++;
+  needUpdate = true;
+}
+
+void Container::sub_Axis(){
+  if(NoAxis>1)NoAxis--;
+  needUpdate = true;
+}
+
+sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
+{
+  //std::cout<<"Calculations:"<<std::endl;
+  sf::Vector2f middleDis(ds.dw/2.0, ds.dh/2.0);
+  sf::Vector2f middleTex(ds.tw/2.0, ds.th/2.0);
+  double theta = M_PI/double(ds.NoAxis);
+  //std::cout<<"Theta: "<<theta<<std::endl;
+  sf::Vector2f ofcenter = posDis-middleDis;
+  double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
+  //std::cout<<"Phi: "<<phi<<std::endl;
+  unsigned part = int(phi/theta);
+  //std::cout<<"part: "<<part<<std::endl;
+  double radiusD = sqrt(ofcenter.y*ofcenter.y+ ofcenter.x*ofcenter.x);
+  //std::cout<<"R: "<<radiusD<<std::endl;
+  double radiusT = radiusD*(double(ds.tw-2)/double(ds.dw))*0.7071;
+  double alpha;
+  if(part & 1)
+  {
+    alpha = phi - part*theta;
+  }
+  else
+  {
+    alpha = (part+1)*theta - phi;
+  }
+  //std::cout<<"Alpha: "<<alpha<<std::endl;
+  return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleTex;
+}
+
+sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
+{
+  int x1 = int(pos.x);
+  int y1 = int(pos.y);
+  x1 = x1<0 ? ds.tw+x1 : x1;
+  y1 = y1<0 ? ds.th+y1 : y1;
+  x1 = x1>=ds.tw ? x1 - ds.tw : x1;
+  y1 = y1>=ds.th ? y1 - ds.th : y1;
+  int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
+  int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
+  double decX = pos.x - float(x1);
+  double decY = pos.y - float(y1);
+
+  sf::Color a11, a12, a21, a22;
+  a11 = ds.oryginal.getPixel(x1, y1);
+  a12 = ds.oryginal.getPixel(x2, y1);
+  a21 = ds.oryginal.getPixel(x1, y2);
+  a22 = ds.oryginal.getPixel(x2, y2);
+
+  sf::Color result;
+  result.r=(1-decY)*(1-decX)*a11.r + (1-decY)*(decX)*a12.r + (decY)*(1-decX)*a21.r + (decY)*(decX)*a22.r;
+  result.g=(1-decY)*(1-decX)*a11.g + (1-decY)*(decX)*a12.g + (decY)*(1-decX)*a21.g + (decY)*(decX)*a22.g;
+  result.b=(1-decY)*(1-decX)*a11.b + (1-decY)*(decX)*a12.b + (decY)*(1-decX)*a21.b + (decY)*(decX)*a22.b;
+  return result;
 }
 
 void updateThread(Container& ds, unsigned ymin, unsigned ymax)
