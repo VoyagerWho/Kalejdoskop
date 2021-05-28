@@ -25,6 +25,7 @@ class Scrollbar : public InteractiveObject
     double getValue() const;
 
     void setPosition(const sf::Vector2f&);
+    void setPosition_ver2(const sf::Vector2f&);
 
     void setScale(const sf::Vector2f&);
 
