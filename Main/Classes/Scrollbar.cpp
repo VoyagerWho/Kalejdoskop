@@ -73,6 +73,13 @@ void Scrollbar::setPosition(const sf::Vector2f& val)
   scroll.setPosition(position.x+ofFromMin, position.y);
 }
 //-----------------------------------------------------------------------------------------------------------
+void Scrollbar::setPosition_ver2(const sf::Vector2f& val)
+{
+  InteractiveObject::setPosition(val);
+  double ofFromMin = (size.x)*(scrollVal - valmin)/(valmax - valmin)+(valmax - valmin)/2;
+  scroll.setPosition(position.x+ofFromMin, position.y);
+}
+//-----------------------------------------------------------------------------------------------------------
 
 void Scrollbar::setScale(const sf::Vector2f& val)
 {
