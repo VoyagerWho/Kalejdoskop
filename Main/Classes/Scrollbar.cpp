@@ -57,7 +57,12 @@ double Scrollbar::getValue() const
   return scrollVal;
 }
 //-----------------------------------------------------------------------------------------------------------
-
+void Scrollbar::setValue(double val)
+{
+  scrollVal = val;
+  scroll.setPosition(sf::Vector2f(position.x + (size.x)*(scrollVal - valmin)/(valmax - valmin), position.y));
+}
+//-----------------------------------------------------------------------------------------------------------
 
 void Scrollbar::setSize(const sf::Vector2f& val)
 {

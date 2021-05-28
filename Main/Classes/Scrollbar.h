@@ -23,6 +23,7 @@ class Scrollbar : public InteractiveObject
     double getMax() const;
 
     double getValue() const;
+    void setValue(double);
 
     void setPosition(const sf::Vector2f&);
     void setPosition_ver2(const sf::Vector2f&);

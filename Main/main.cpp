@@ -54,7 +54,7 @@ int main()
     // GUI stuff
     //-----------------------------------------------------------------------------------------------------------
 
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 12);
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 11);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
     /*sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");
@@ -68,7 +68,7 @@ int main()
     sidemenu.buttons[9].setLabelString("Reset");
     sidemenu.buttons[10].setLabelString("Off");*/
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 11; i++) {
         sidemenu.buttons[i].flags ^= AButtonCircle::showLabel;
         sidemenu.buttons[i].setTextureRect(sf::IntRect(0, 0, 256, 256));
     }
@@ -80,11 +80,10 @@ int main()
     sidemenu.buttons[4].loadTextureFromFile("Files/Buttons/minus.png");
     sidemenu.buttons[5].loadTextureFromFile("Files/Buttons/save.png");
     sidemenu.buttons[6].loadTextureFromFile("Files/Buttons/generujBitmapy.png");
-    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/display.png");
-    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/cpu.png");
-    sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/gpu.png");
-    sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/reset.png");
-    sidemenu.buttons[11].loadTextureFromFile("Files/Buttons/OnOff.png");
+    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/bc.png");
+    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/gpu.png");
+    sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/reset.png");
+    sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/OnOff.png");
 
     //sidemenu.setPosition(window);
 
@@ -145,6 +144,8 @@ int main()
     {
       deltaTime=clock.restart().asSeconds();
       datastorage.moveAngle(deltaTime, speed);
+      scrollAngle.setValue(datastorage.get_angle());
+      scrollAngle.setLabelString("Kat: "+std::to_string(static_cast<int>(datastorage.get_angle()*360/(2*M_PI)))+" stopni");
 
       if(speed != 0.0)
         datastorage.needUpdate=true;
@@ -267,22 +268,42 @@ int main()
                 }break;
                 case 7:
                 {
-                  datastorage.interpolationBC=true;
+                  if(datastorage.interpolationBC)
+                  {
+                    datastorage.interpolationBC=false;
+                    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/bc.png");
+                  }
+                  else
+                  {
+                    datastorage.interpolationBC=true;
+                    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/bl.png");
+                  }
                   datastorage.needUpdate = true;
                 }break;
                 case 8:
                 {
-                  GPUacceleration=false;
+                  if(GPUacceleration)
+                  {
+                    GPUacceleration=false;
+                    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/GPU.png");
+                  }
+                  else
+                  {
+                    GPUacceleration=true;
+                    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/CPU.png");
+                  }
                 }break;
                 case 9:
                 {
-                  GPUacceleration=true;
+                  datastorage.reset();
+                  scrollAngle.setValue(0.0);
+                  scrollPosX.setValue(0.0);
+                  scrollPosY.setValue(0.0);
+                  scrollAngle.setLabelString("Kat: "+std::to_string(static_cast<int>(datastorage.get_angle()*360/(2*M_PI)))+" stopni");
+                  scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())) + "%");
+                  scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())) + "%");
                 }break;
                 case 10:
-                {
-                  datastorage.reset();
-                }break;
-                case 11:
                 {
                     displayThread.terminate();
                     window.close();
@@ -299,15 +320,15 @@ int main()
             }
             if (scrollPosX.onClick(evnt))
             {
-                datastorage.set_offsetX(scrollPosX.getValue());
-                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())) + "%");
-                datastorage.needUpdate = true;
+              datastorage.set_offsetX(scrollPosX.getValue());
+              scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())) + "%");
+              datastorage.needUpdate = true;
             }
             if (scrollPosY.onClick(evnt))
             {
-                datastorage.set_offsetY(scrollPosY.getValue());
-                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())) + "%");
-                datastorage.needUpdate = true;
+              datastorage.set_offsetY(scrollPosY.getValue());
+              scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())) + "%");
+              datastorage.needUpdate = true;
             }
           }break;
 

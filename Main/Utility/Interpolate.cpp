@@ -135,10 +135,12 @@ sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
   y1 = y1>=ds.th ? y1 - ds.th : y1;
   int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
   int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
-  double decX = abs(pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
-  double decY = abs(pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
+  double decX = (pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
+  double decY = (pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
   decX-=int(decX);
   decY-=int(decY);
+  decX = decX < 0.0 ? 1+decX : decX;
+  decY = decY < 0.0 ? 1+decY : decY;
 
   sf::Color a11, a12, a21, a22;
   a11 = ds.oryginal.getPixel(x1, y1);
@@ -179,10 +181,12 @@ sf::Color interpolateBC(sf::Vector2f pos, Container& ds)
   int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
   int x3 = x1+2 < ds.tw ? x1+2 : x1+2 - ds.tw;
   int y3 = y1+2 < ds.th ? y1+2 : y1+2 - ds.th;
-  double decX = abs(pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
-  double decY = abs(pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
+  double decX = (pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
+  double decY = (pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
   decX-=int(decX);
   decY-=int(decY);
+  decX = decX < 0.0 ? 1+decX : decX;
+  decY = decY < 0.0 ? 1+decY : decY;
 
   sf::Color a00 = ds.oryginal.getPixel(x0, y0);
   sf::Color a10 = ds.oryginal.getPixel(x1, y0);
