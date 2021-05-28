@@ -89,12 +89,12 @@ int main()
     //sidemenu.setPosition(window);
 
     Scrollbar scrollPosX(-100.0, 100.0);
-    scrollPosX.setPosition(sf::Vector2f(10.0f, 770.0f));
+    scrollPosX.setPosition_ver2(sf::Vector2f(10.0f, 770.0f));
     scrollPosX.setSize(sf::Vector2f(200.0f, 20.0f));
     scrollPosX.setLabelString("X: 0");
     
     Scrollbar scrollPosY(-100.0, 100.0);
-    scrollPosY.setPosition(sf::Vector2f(300.0f, 770.0f));
+    scrollPosY.setPosition_ver2(sf::Vector2f(300.0f, 770.0f));
     scrollPosY.setSize(sf::Vector2f(200.0f, 20.0f));
     scrollPosY.setLabelString("Y: 0");
 
