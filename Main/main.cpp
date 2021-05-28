@@ -54,7 +54,7 @@ int main()
     // GUI stuff
     //-----------------------------------------------------------------------------------------------------------
 
-    SidebarMenu sidemenu(window, SidebarMenu::Right, 11);
+    SidebarMenu sidemenu(window, SidebarMenu::Right, 12);
     sidemenu.flags ^= SidebarMenu::showLabel | SidebarMenu::visible;
     /*sidemenu.buttons[0].setLabelString("Display");
     sidemenu.buttons[1].setLabelString("Start");

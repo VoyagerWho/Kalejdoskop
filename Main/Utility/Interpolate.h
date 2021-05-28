@@ -1,5 +1,6 @@
 #ifndef INTERPOLATIONS_H
 #define INTERPOLATIONS_H
+#define M_PI 3.141592653589
 
 #include <iostream>
 #include <string>
