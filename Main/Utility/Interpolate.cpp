@@ -156,7 +156,7 @@ sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
 float cubicFunc(float a, float b, float c, float d, float X){
   float A = (-1.0)*a/2.0 + 3*b/2.0 - 3*c/2.0 + d/2.0;
   float B = a - 5*b/2.0 + 2*c - d/2.0;
-  float C = (-1.0)*a/2.0 + b/2.0;
+  float C = (-1.0)*a/2.0 + c/2.0;
   float D = b;
 
   return A*pow(X, 3) + B*pow(X, 2) + C*X + D;
