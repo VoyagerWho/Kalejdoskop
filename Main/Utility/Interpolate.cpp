@@ -10,12 +10,13 @@ Container::Container(std::string file_name)
     offsetY = 0;
 
     needUpdate = true;
+    interpolationBC = false;
 
     oryginal.loadFromFile(file_name);
     tw = oryginal.getSize().x;
     th = oryginal.getSize().y;
     display.create(dw, dh);
-    
+
     piksele = new sf::Uint8[dw*dh*4];
     for(unsigned i=0;i<dh;i++)
     {
@@ -77,6 +78,25 @@ void Container::moveAngle(float deltaTime, float speed)
   angle = angle > 2*M_PI ? angle - 2*M_PI : angle;
 }
 
+void Container::add_Axis(){
+  if(NoAxis<20) NoAxis++;
+  needUpdate = true;
+}
+
+void Container::sub_Axis(){
+  if(NoAxis>1)NoAxis--;
+  needUpdate = true;
+}
+
+void Container::refresh(){
+  angle = 0.0;
+  NoAxis = 8;
+  offsetX = 0;
+  offsetY = 0;
+  needUpdate = true;
+  interpolationBC = false;
+}
+
 sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 {
   //std::cout<<"Calculations:"<<std::endl;
@@ -85,7 +105,7 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
   double theta = M_PI/double(ds.NoAxis);
   //std::cout<<"Theta: "<<theta<<std::endl;
   sf::Vector2f ofcenter = posDis-middleDis;
-  ofcenter.x += ds.offsetX*0.01*ds.tw; 
+  ofcenter.x += ds.offsetX*0.01*ds.tw;
   ofcenter.y += ds.offsetY*0.01*ds.th;
   double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
   //std::cout<<"Phi: "<<phi<<std::endl;
@@ -107,29 +127,11 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
   return sf::Vector2f(radiusT*cos(ds.angle+alpha), radiusT*sin(ds.angle+alpha))+middleTex;
 }
 
-void Container::add_Axis(){
-  if(NoAxis<20) NoAxis++;
-  needUpdate = true;
-}
-
-void Container::sub_Axis(){
-  if(NoAxis>1)NoAxis--;
-  needUpdate = true;
-}
-
-void Container::refresh(){
-  angle = 0.0;
-  NoAxis = 8;
-  offsetX = 0;
-  offsetY = 0;
-  needUpdate = true;
-}
-
 sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
 {
   int x1 = int(pos.x);
   int y1 = int(pos.y);
-  x1 = x1<0 ? ds.tw+x1 : x1;
+  x1 = x1<0 ? ds.tw+x1: x1;
   y1 = y1<0 ? ds.th+y1 : y1;
   x1 = x1>=ds.tw ? x1 - ds.tw : x1;
   y1 = y1>=ds.th ? y1 - ds.th : y1;
@@ -151,6 +153,86 @@ sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
   return result;
 }
 
+float cubicFunc(float a, float b, float c, float d, float X){
+  float A = (-1.0)*a/2.0 + 3*b/2.0 - 3*c/2.0 + d/2.0;
+  float B = a - 5*b/2.0 + 2*c - d/2.0;
+  float C = (-1.0)*a + b/2.0;
+  float D = b;
+
+  return A*pow(X, 3) + B*pow(X, 2) + C*X + D;
+}
+
+//prototyp bikubicznej/////////////////////////////////////////////////
+
+sf::Color interpolateBC(sf::Vector2f pos, Container& ds)
+{
+  int x1 = int(pos.x);
+  int y1 = int(pos.y);
+  int x0 = x1-1<0 ? ds.tw+(x1-1): x1-1;
+  int y0 = y1-1<0 ? ds.tw+(y1-1): y1-1;
+  x1 = x1<0 ? ds.tw+x1: x1;
+  y1 = y1<0 ? ds.th+y1 : y1;
+  x1 = x1>=ds.tw ? x1 - ds.tw : x1;
+  y1 = y1>=ds.th ? y1 - ds.th : y1;
+  int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
+  int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
+  int x3 = x1+2 < ds.tw ? x1+2 : x1+2 - ds.tw;
+  int y3 = y1+2 < ds.th ? y1+2 : y1+2 - ds.th;
+  double decX = pos.x - float(x1);
+  double decY = pos.y - float(y1);
+
+  sf::Color a00 = ds.oryginal.getPixel(x0, y0);
+  sf::Color a10 = ds.oryginal.getPixel(x1, y0);
+  sf::Color a20 = ds.oryginal.getPixel(x2, y0);
+  sf::Color a30 = ds.oryginal.getPixel(x3, y0);
+
+  sf::Color a01 = ds.oryginal.getPixel(x0, y1);
+  sf::Color a11 = ds.oryginal.getPixel(x1, y1);
+  sf::Color a21 = ds.oryginal.getPixel(x2, y1);
+  sf::Color a31 = ds.oryginal.getPixel(x3, y1);
+
+  sf::Color a02 = ds.oryginal.getPixel(x0, y2);
+  sf::Color a12 = ds.oryginal.getPixel(x1, y2);
+  sf::Color a22 = ds.oryginal.getPixel(x2, y2);
+  sf::Color a32 = ds.oryginal.getPixel(x3, y2);
+
+  sf::Color a03 = ds.oryginal.getPixel(x0, y3);
+  sf::Color a13 = ds.oryginal.getPixel(x1, y3);
+  sf::Color a23 = ds.oryginal.getPixel(x2, y3);
+  sf::Color a33 = ds.oryginal.getPixel(y3, y3);
+
+  sf::Color result;
+
+  float col0R = cubicFunc(a00.r, a10.r, a20.r, a30.r, decX);
+  float col1R = cubicFunc(a01.r, a11.r, a21.r, a31.r, decX);
+  float col2R = cubicFunc(a02.r, a12.r, a22.r, a32.r, decX); 
+  float col3R = cubicFunc(a03.r, a13.r, a23.r, a33.r, decX);
+  float r = cubicFunc(col0R, col1R, col2R, col3R, decY);
+  if(r<0.0) result.r = 0.0;
+  else if(r>255.0) result.r = 255.0;
+  else result.r = r;
+
+  float col0G = cubicFunc(a00.g, a10.g, a20.g, a30.g, decX);
+  float col1G = cubicFunc(a01.g, a11.g, a21.g, a31.g, decX);
+  float col2G = cubicFunc(a02.g, a12.g, a22.g, a32.g, decX); 
+  float col3G = cubicFunc(a03.g, a13.g, a23.g, a33.g, decX);
+  float g = cubicFunc(col0G, col1G, col2G, col3G, decY);
+  if(g<0.0) result.g = 0.0;
+  else if(g>255.0) result.g = 255.0;
+  else result.g = g;
+
+  float col0B = cubicFunc(a00.b, a10.b, a20.b, a30.b, decX);
+  float col1B = cubicFunc(a01.b, a11.b, a21.b, a31.b, decX);
+  float col2B = cubicFunc(a02.b, a12.b, a22.b, a32.b, decX); 
+  float col3B = cubicFunc(a03.b, a13.b, a23.b, a33.b, decX);
+  float b = cubicFunc(col0B, col1B, col2B, col3B, decY);
+  if(b<0.0) result.b = 0.0;
+  else if(b>255.0) result.b = 255.0;
+  else result.b = b;
+
+  return result;
+}
+
 void updateThread(Container& ds, unsigned ymin, unsigned ymax)
 {
   sf::Color tmp;
@@ -158,7 +240,8 @@ void updateThread(Container& ds, unsigned ymin, unsigned ymax)
   {
     for(unsigned j=0;j<ds.dw;j++)
     {
-      tmp = interpolateBL(translate(sf::Vector2f(j, i), ds), ds);
+      if (ds.interpolationBC) tmp = interpolateBC(translate(sf::Vector2f(j, i), ds), ds);
+      else tmp = interpolateBL(translate(sf::Vector2f(j, i), ds), ds);
       ds.piksele[4*(i*ds.dw+j)]=tmp.r;
       ds.piksele[4*(i*ds.dw+j)+1]=tmp.g;
       ds.piksele[4*(i*ds.dw+j)+2]=tmp.b;

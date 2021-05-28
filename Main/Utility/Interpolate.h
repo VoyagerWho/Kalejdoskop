@@ -13,6 +13,7 @@ class Container
 public:
   friend void updateThread(Container& ds, unsigned ymin, unsigned ymax);
   friend sf::Color interpolateBL(sf::Vector2f pos, Container& ds);
+  friend sf::Color interpolateBC(sf::Vector2f pos, Container& ds);
   friend sf::Vector2f translate(sf::Vector2f posDis, Container& ds);
 
   Container(std::string file_name);
@@ -39,6 +40,7 @@ public:
   void set_offsetY(double value){offsetY = value;}
 
     bool needUpdate;
+    bool interpolationBC;
     sf::Uint8* piksele;
 
 protected:

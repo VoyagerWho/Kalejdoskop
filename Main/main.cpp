@@ -7,7 +7,6 @@
 #include "Classes/TextEdit.h"
 #include "Utility/Interpolate.h"
 
-
 void displayHandler(const sf::Image& org)
 {
   sf::RenderWindow window(sf::VideoMode(org.getSize().x, org.getSize().y), "Display", sf::Style::Default);
@@ -69,7 +68,7 @@ int main()
     sidemenu.buttons[9].setLabelString("Reset");
     sidemenu.buttons[10].setLabelString("Off");*/
 
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 12; i++) {
         sidemenu.buttons[i].flags ^= AButtonCircle::showLabel;
         sidemenu.buttons[i].setTextureRect(sf::IntRect(0, 0, 256, 256));
     }
@@ -81,10 +80,11 @@ int main()
     sidemenu.buttons[4].loadTextureFromFile("Files/Buttons/minus.png");
     sidemenu.buttons[5].loadTextureFromFile("Files/Buttons/save.png");
     sidemenu.buttons[6].loadTextureFromFile("Files/Buttons/generujBitmapy.png");
-    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/cpu.png");
-    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/gpu.png");
-    sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/reset.png");
-    sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/OnOff.png");
+    sidemenu.buttons[7].loadTextureFromFile("Files/Buttons/display.png");
+    sidemenu.buttons[8].loadTextureFromFile("Files/Buttons/cpu.png");
+    sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/gpu.png");
+    sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/reset.png");
+    sidemenu.buttons[11].loadTextureFromFile("Files/Buttons/OnOff.png");
     
     //sidemenu.setPosition(window);
 
@@ -265,20 +265,25 @@ int main()
                 }break;
                 case 7:
                 {
-                  GPUacceleration=false;
+                  datastorage.interpolationBC=true;
+                  datastorage.needUpdate = true;
                 }break;
                 case 8:
                 {
-                  GPUacceleration=true;
+                  GPUacceleration=false;
                 }break;
                 case 9:
                 {
-                  datastorage.refresh();
+                  GPUacceleration=true;
                 }break;
                 case 10:
                 {
-                  displayThread.terminate();
-                   window.close();
+                  datastorage.refresh();
+                }break;
+                case 11:
+                {
+                    displayThread.terminate();
+                    window.close();
                 }break;
                 default:
                   break;
@@ -293,13 +298,13 @@ int main()
             if (scrollPosX.onClick(evnt))
             {
                 datastorage.set_offsetX(scrollPosX.getValue());
-                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX()))+"%");
+                scrollPosX.setLabelString("X: " + std::to_string(static_cast<int>(datastorage.get_offsetX())) + "%");
                 datastorage.needUpdate = true;
             }
             if (scrollPosY.onClick(evnt))
             {
                 datastorage.set_offsetY(scrollPosY.getValue());
-                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY()))+"%");
+                scrollPosY.setLabelString("Y: " + std::to_string(static_cast<int>(datastorage.get_offsetY())) + "%");
                 datastorage.needUpdate = true;
             }
           }break;
