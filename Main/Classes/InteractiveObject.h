@@ -2,7 +2,7 @@
 #define INTERACTIVEOBJECT_H
 
 #define CHAR_WIDTH_MULTIPLIER double(9864)/double(16384)
-#define PI 3.141592653589f
+#define PI 3.141592653589
 #define RADIANS(a) (a/180.0f*PI)
 
 #include <SFML/Graphics.hpp>

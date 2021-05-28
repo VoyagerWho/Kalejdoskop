@@ -85,14 +85,14 @@ int main()
     sidemenu.buttons[9].loadTextureFromFile("Files/Buttons/gpu.png");
     sidemenu.buttons[10].loadTextureFromFile("Files/Buttons/reset.png");
     sidemenu.buttons[11].loadTextureFromFile("Files/Buttons/OnOff.png");
-    
+
     //sidemenu.setPosition(window);
 
     Scrollbar scrollPosX(-100.0, 100.0);
     scrollPosX.setPosition_ver2(sf::Vector2f(10.0f, 770.0f));
     scrollPosX.setSize(sf::Vector2f(200.0f, 20.0f));
     scrollPosX.setLabelString("X: 0");
-    
+
     Scrollbar scrollPosY(-100.0, 100.0);
     scrollPosY.setPosition_ver2(sf::Vector2f(300.0f, 770.0f));
     scrollPosY.setSize(sf::Vector2f(200.0f, 20.0f));
@@ -104,6 +104,7 @@ int main()
     scrollAngle.setLabelString("Kat: 0");
 
     TextEdit edit1(sf::Vector2f(600.0f, 10.0f), (unsigned)9);
+    edit1.SetTextString("");
     edit1.visible = true;
     TextEdit* activeEdit = nullptr;
     //-----------------------------------------------------------------------------------------------------------
@@ -130,6 +131,7 @@ int main()
     sf::Texture oryginalTex;
     oryginalTex.create(datastorage.get_tw(), datastorage.get_th());
     oryginalTex.update(datastorage.get_oryginal());
+    oryginalTex.setRepeated(true);
     //-----------------------------------------------------------------------------------------------------------
 
 
@@ -143,7 +145,7 @@ int main()
     {
       deltaTime=clock.restart().asSeconds();
       datastorage.moveAngle(deltaTime, speed);
-     
+
       if(speed != 0.0)
         datastorage.needUpdate=true;
       while(window.pollEvent(evnt))
@@ -238,20 +240,20 @@ int main()
                 }break;
                 case 5:
                 {
-                  datastorage.get_display().copyToImage().saveToFile("Output/preview.png");
+                  datastorage.get_display().copyToImage().saveToFile("Output/preview.bmp");
                 }break;
                 case 6:
                 {
                   speed = 0.0f;
                   const std::string filename = "Output/" + edit1.GetString();
-                  const std::string rozsz = ".png";
+                  const std::string rozsz = ".bmp";
                   float tempSpeed = 2.0* M_PI / 100.0;
 
                   //generuj bitmapê, czyli 100 obrazków
 
                   for (int i = 1; i <= 100; i++)
                   {
-                    datastorage.moveAngle(deltaTime, 1);
+                    datastorage.moveAngle(tempSpeed, 1);
                     datastorage.needUpdate=true;
                     datastorage.update();
                     if (i < 10) {
@@ -278,7 +280,7 @@ int main()
                 }break;
                 case 10:
                 {
-                  datastorage.refresh();
+                  datastorage.reset();
                 }break;
                 case 11:
                 {
@@ -321,14 +323,16 @@ int main()
       if(GPUacceleration)
       {
         double tx=datastorage.get_tw()/2.0, ty=datastorage.get_th()/2.0;
+        int offx = int(datastorage.get_offsetX()*0.01*datastorage.get_tw());
+        int offy = int(datastorage.get_offsetY()*0.01*datastorage.get_th());
         for(unsigned i=0;i<2*datastorage.get_NoAxis();i++)
         {
           triangle[0].position = sf::Vector2f(400.0f, 400.0f);
-          triangle[0].texCoords = sf::Vector2f(tx, ty);
+          triangle[0].texCoords = sf::Vector2f(tx + offx, ty + offy);
           triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos(i*(M_PI/datastorage.get_NoAxis())), 400.0f+400.f*sin(i*(M_PI/datastorage.get_NoAxis())));
-          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), ty+tx*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+offx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), ty+offy+ty*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
           triangle[i%2+1].position = sf::Vector2f(400.0f+400.f*cos((i+1)*(M_PI/datastorage.get_NoAxis())), 400.0f+400.f*sin((i+1)*(M_PI/datastorage.get_NoAxis())));
-          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), tx+ty*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
+          triangle[i%2+1].texCoords = sf::Vector2f(tx+tx*cos((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()), ty+offy+ty*sin((i%2)*(M_PI/datastorage.get_NoAxis())+datastorage.get_angle()));
           window.draw(triangle, &oryginalTex);
         }
       }
@@ -347,5 +351,5 @@ int main()
       window.display();
 
     }
-    delete[] datastorage.piksele;    
+    delete[] datastorage.piksele;
 }

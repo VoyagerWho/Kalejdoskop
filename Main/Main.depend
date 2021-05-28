@@ -6,7 +6,7 @@
 1599856548 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\animatedbutton.h
 	"InteractiveObject.h"
 
-1599856548 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\interactiveobject.h
+1622220643 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\interactiveobject.h
 	<SFML/Graphics.hpp>
 	"ExtraFunctions.h"
 
@@ -21,7 +21,7 @@
 1598988613 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\extrafunctions.cpp
 	"ExtraFunctions.h"
 
-1609461853 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\interactiveobject.cpp
+1621802428 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\interactiveobject.cpp
 	"InteractiveObject.h"
 
 1599082316 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\interactiveobjectanimations.cpp
@@ -45,7 +45,7 @@
 1609452505 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\sidebarmenuanimations.cpp
 	"SidebarMenu.h"
 
-1621704852 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\textedit.cpp
+1621947300 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\textedit.cpp
 	"TextEdit.h"
 
 1585678109 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\textedit.h
@@ -58,17 +58,19 @@
 	<SFML/Graphics.hpp>
 	<vector>
 
-1621715548 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
+1622222264 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.cpp
 	"Interpolate.h"
 
-1621715925 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
+1622221012 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\utility\interpolate.h
 	<iostream>
+	<string>
 	<cmath>
 	<SFML/Graphics.hpp>
 	<SFML/System.hpp>
 	<functional>
 
-1621714719 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\main.cpp
+1622222259 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\main.cpp
+	<fstream>
 	<iostream>
 	<SFML/Graphics.hpp>
 	<SFML/System.hpp>
@@ -77,10 +79,10 @@
 	"Classes/TextEdit.h"
 	"Utility/Interpolate.h"
 
-1621630395 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\scrollbar.cpp
+1622219429 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\scrollbar.cpp
 	"Scrollbar.h"
 
-1621713762 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\scrollbar.h
+1622219429 d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\scrollbar.h
 	"InteractiveObject.h"
 
 1621630216 source:d:\pliki\na studia\semestr 4\1. prywatne notatki\grafika komputerowa\projekt\git\kalejdoskop\main\classes\scrollbaranimations.cpp

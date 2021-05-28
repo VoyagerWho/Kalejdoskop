@@ -23,7 +23,7 @@ public:
   void moveAngle(float deltaTime, float speed);
   void add_Axis();
   void sub_Axis();
-  void refresh();
+  void reset();
 
   //get_methods
   sf::Texture& get_display(){return display;}

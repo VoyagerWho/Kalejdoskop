@@ -88,7 +88,7 @@ void Container::sub_Axis(){
   needUpdate = true;
 }
 
-void Container::refresh(){
+void Container::reset(){
   angle = 0.0;
   NoAxis = 8;
   offsetX = 0;
@@ -105,8 +105,6 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
   double theta = M_PI/double(ds.NoAxis);
   //std::cout<<"Theta: "<<theta<<std::endl;
   sf::Vector2f ofcenter = posDis-middleDis;
-  ofcenter.x += ds.offsetX*0.01*ds.tw;
-  ofcenter.y += ds.offsetY*0.01*ds.th;
   double phi = atan2(ofcenter.y, ofcenter.x) + 2*M_PI;
   //std::cout<<"Phi: "<<phi<<std::endl;
   unsigned part = int(phi/theta);
@@ -129,16 +127,18 @@ sf::Vector2f translate(sf::Vector2f posDis, Container& ds)
 
 sf::Color interpolateBL(sf::Vector2f pos, Container& ds)
 {
-  int x1 = int(pos.x);
-  int y1 = int(pos.y);
+  int x1 = int(pos.x + ds.offsetX*0.01*ds.tw);
+  int y1 = int(pos.y + ds.offsetY*0.01*ds.th);
   x1 = x1<0 ? ds.tw+x1: x1;
   y1 = y1<0 ? ds.th+y1 : y1;
   x1 = x1>=ds.tw ? x1 - ds.tw : x1;
   y1 = y1>=ds.th ? y1 - ds.th : y1;
   int x2 = x1+1 < ds.tw ? x1+1 : x1+1 - ds.tw;
   int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
-  double decX = pos.x - float(x1);
-  double decY = pos.y - float(y1);
+  double decX = abs(pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
+  double decY = abs(pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
+  decX-=int(decX);
+  decY-=int(decY);
 
   sf::Color a11, a12, a21, a22;
   a11 = ds.oryginal.getPixel(x1, y1);
@@ -159,15 +159,16 @@ float cubicFunc(float a, float b, float c, float d, float X){
   float C = (-1.0)*a/2.0 + c/2.0;
   float D = b;
 
-  return A*pow(X, 3) + B*pow(X, 2) + C*X + D;
+  //return A*pow(X, 3) + B*pow(X, 2) + C*X + D;
+  return ((A*X+B)*X+C)*X+D;
 }
 
 //prototyp bikubicznej/////////////////////////////////////////////////
 
 sf::Color interpolateBC(sf::Vector2f pos, Container& ds)
 {
-  int x1 = int(pos.x);
-  int y1 = int(pos.y);
+  int x1 = int(pos.x + ds.offsetX*0.01*ds.tw);
+  int y1 = int(pos.y + ds.offsetY*0.01*ds.th);
   int x0 = x1-1<0 ? ds.tw+(x1-1): x1-1;
   int y0 = y1-1<0 ? ds.tw+(y1-1): y1-1;
   x1 = x1<0 ? ds.tw+x1: x1;
@@ -178,8 +179,10 @@ sf::Color interpolateBC(sf::Vector2f pos, Container& ds)
   int y2 = y1+1 < ds.th ? y1+1 : y1+1 - ds.th;
   int x3 = x1+2 < ds.tw ? x1+2 : x1+2 - ds.tw;
   int y3 = y1+2 < ds.th ? y1+2 : y1+2 - ds.th;
-  double decX = pos.x - float(x1);
-  double decY = pos.y - float(y1);
+  double decX = abs(pos.x - float(x1) + ds.offsetX*0.01*ds.tw);
+  double decY = abs(pos.y - float(y1) + ds.offsetX*0.01*ds.tw);
+  decX-=int(decX);
+  decY-=int(decY);
 
   sf::Color a00 = ds.oryginal.getPixel(x0, y0);
   sf::Color a10 = ds.oryginal.getPixel(x1, y0);
@@ -199,35 +202,44 @@ sf::Color interpolateBC(sf::Vector2f pos, Container& ds)
   sf::Color a03 = ds.oryginal.getPixel(x0, y3);
   sf::Color a13 = ds.oryginal.getPixel(x1, y3);
   sf::Color a23 = ds.oryginal.getPixel(x2, y3);
-  sf::Color a33 = ds.oryginal.getPixel(y3, y3);
+  sf::Color a33 = ds.oryginal.getPixel(x3, y3);
 
   sf::Color result;
 
-  float col0R = cubicFunc(a00.r, a10.r, a20.r, a30.r, decX);
-  float col1R = cubicFunc(a01.r, a11.r, a21.r, a31.r, decX);
-  float col2R = cubicFunc(a02.r, a12.r, a22.r, a32.r, decX); 
-  float col3R = cubicFunc(a03.r, a13.r, a23.r, a33.r, decX);
-  float r = cubicFunc(col0R, col1R, col2R, col3R, decY);
-  if(r<0.0) result.r = 0.0;
-  else if(r>255.0) result.r = 255.0;
+//  float col0R = cubicFunc(a00.r, a10.r, a20.r, a30.r, decX);
+//  float col1R = cubicFunc(a01.r, a11.r, a21.r, a31.r, decX);
+//  float col2R = cubicFunc(a02.r, a12.r, a22.r, a32.r, decX);
+//  float col3R = cubicFunc(a03.r, a13.r, a23.r, a33.r, decX);
+  float r = cubicFunc(cubicFunc(a00.r, a10.r, a20.r, a30.r, decX),
+                      cubicFunc(a01.r, a11.r, a21.r, a31.r, decX),
+                      cubicFunc(a02.r, a12.r, a22.r, a32.r, decX),
+                      cubicFunc(a03.r, a13.r, a23.r, a33.r, decX), decY);
+  if(r<0.0) result.r = 0;
+  else if(r>255.0) result.r = 255;
   else result.r = r;
 
-  float col0G = cubicFunc(a00.g, a10.g, a20.g, a30.g, decX);
-  float col1G = cubicFunc(a01.g, a11.g, a21.g, a31.g, decX);
-  float col2G = cubicFunc(a02.g, a12.g, a22.g, a32.g, decX); 
-  float col3G = cubicFunc(a03.g, a13.g, a23.g, a33.g, decX);
-  float g = cubicFunc(col0G, col1G, col2G, col3G, decY);
-  if(g<0.0) result.g = 0.0;
-  else if(g>255.0) result.g = 255.0;
+//  float col0G = cubicFunc(a00.g, a10.g, a20.g, a30.g, decX);
+//  float col1G = cubicFunc(a01.g, a11.g, a21.g, a31.g, decX);
+//  float col2G = cubicFunc(a02.g, a12.g, a22.g, a32.g, decX);
+//  float col3G = cubicFunc(a03.g, a13.g, a23.g, a33.g, decX);
+  float g = cubicFunc(cubicFunc(a00.g, a10.g, a20.g, a30.g, decX),
+                      cubicFunc(a01.g, a11.g, a21.g, a31.g, decX),
+                      cubicFunc(a02.g, a12.g, a22.g, a32.g, decX),
+                      cubicFunc(a03.g, a13.g, a23.g, a33.g, decX), decY);
+  if(g<0.0) result.g = 0;
+  else if(g>255.0) result.g = 255;
   else result.g = g;
 
-  float col0B = cubicFunc(a00.b, a10.b, a20.b, a30.b, decX);
-  float col1B = cubicFunc(a01.b, a11.b, a21.b, a31.b, decX);
-  float col2B = cubicFunc(a02.b, a12.b, a22.b, a32.b, decX); 
-  float col3B = cubicFunc(a03.b, a13.b, a23.b, a33.b, decX);
-  float b = cubicFunc(col0B, col1B, col2B, col3B, decY);
-  if(b<0.0) result.b = 0.0;
-  else if(b>255.0) result.b = 255.0;
+//  float col0B = cubicFunc(a00.b, a10.b, a20.b, a30.b, decX);
+//  float col1B = cubicFunc(a01.b, a11.b, a21.b, a31.b, decX);
+//  float col2B = cubicFunc(a02.b, a12.b, a22.b, a32.b, decX);
+//  float col3B = cubicFunc(a03.b, a13.b, a23.b, a33.b, decX);
+  float b = cubicFunc(cubicFunc(a00.b, a10.b, a20.b, a30.b, decX),
+                      cubicFunc(a01.b, a11.b, a21.b, a31.b, decX),
+                      cubicFunc(a02.b, a12.b, a22.b, a32.b, decX),
+                      cubicFunc(a03.b, a13.b, a23.b, a33.b, decX), decY);
+  if(b<0.0) result.b = 0;
+  else if(b>255.0) result.b = 255;
   else result.b = b;
 
   return result;
